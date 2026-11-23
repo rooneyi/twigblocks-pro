@@ -1,0 +1,55 @@
+{#- Hero sur grille animée, badge à faisceau lumineux et aperçu produit encadré. Nécessite le bloc gratuit Pattern. -#}
+{%- props
+    ## string Announcement in the badge.
+    announcement = 'Lumen 3 : prévisions de trésorerie',
+    ## string Main heading.
+    title = 'La facturation qui encaisse pour vous',
+    ## string Supporting paragraph.
+    description = 'Devis, factures, relances et rapprochement bancaire dans un seul outil. Vos clients paient plus vite, vous n’y pensez plus.',
+    ## string Primary button label.
+    primaryLabel = 'Commencer gratuitement',
+    ## string Primary button target.
+    primaryHref = '#',
+    ## string Secondary button label.
+    secondaryLabel = 'Voir la démo',
+    ## string Secondary button target.
+    secondaryHref = '#'
+-%}
+<section {{ attributes.defaults({class: 'relative isolate overflow-hidden px-4 pt-20 pb-16 sm:px-6 sm:pt-28'|tailwind_classes}) }}>
+    <twig:Blocks:Pattern type="grid" size="44" fade="top" animated class="-z-10 text-foreground/[0.08]" />
+    <div class="absolute inset-x-0 top-0 -z-10 h-80 bg-[radial-gradient(60%_100%_at_50%_0%,color-mix(in_oklch,var(--primary)_14%,transparent),transparent)]" aria-hidden="true"></div>
+    <div class="mx-auto max-w-3xl text-center">
+        <a href="#" class="tb-beam inline-flex items-center gap-2 rounded-full border bg-background/80 px-3 py-1 text-sm backdrop-blur">
+            <span class="relative flex size-2"><span class="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60 motion-reduce:animate-none"></span><span class="relative inline-flex size-2 rounded-full bg-primary"></span></span>
+            {{ announcement }}
+            <twig:ux:icon name="lucide:arrow-right" class="size-3.5 text-muted-foreground rtl:rotate-180" />
+        </a>
+        <h1 class="mt-7 text-4xl font-semibold tracking-tight text-balance sm:text-6xl">{{ title }}</h1>
+        <p class="mx-auto mt-6 max-w-xl text-lg text-pretty text-muted-foreground">{{ description }}</p>
+        <div class="mt-9 flex flex-wrap justify-center gap-3">
+            <twig:Button as="a" size="lg" href="{{ primaryHref }}" class="h-10 px-5">{{ primaryLabel }}</twig:Button>
+            <twig:Button as="a" size="lg" variant="outline" href="{{ secondaryHref }}" class="h-10 bg-background/80 px-5"><twig:ux:icon name="lucide:play" />{{ secondaryLabel }}</twig:Button>
+        </div>
+    </div>
+    {%- block visual -%}
+    <div class="tb-beam mx-auto mt-16 max-w-5xl rounded-2xl border bg-background/80 p-2 shadow-2xl shadow-primary/10 backdrop-blur" style="--tb-beam-duration: 7s">
+        <div class="overflow-hidden rounded-xl border bg-background">
+            <div class="flex items-center gap-1.5 border-b px-4 py-2.5" aria-hidden="true">
+                <span class="size-2.5 rounded-full bg-muted-foreground/30"></span><span class="size-2.5 rounded-full bg-muted-foreground/30"></span><span class="size-2.5 rounded-full bg-muted-foreground/30"></span>
+                <span class="ms-3 rounded-md bg-muted px-3 py-0.5 text-xs text-muted-foreground">app.lumen.example/tableau-de-bord</span>
+            </div>
+            <div class="grid gap-3 p-4 sm:grid-cols-3">
+                {%- for kpi in [['Encaissé ce mois', '48 250 €', '+12 %'], ['En attente', '9 870 €', '14 factures'], ['Délai moyen', '18 j', '−6 j']] %}
+                    <div class="rounded-lg border p-4"><p class="text-xs text-muted-foreground">{{ kpi[0] }}</p><p class="mt-1 text-2xl font-semibold tabular-nums">{{ kpi[1] }}</p><p class="text-xs text-primary">{{ kpi[2] }}</p></div>
+                {%- endfor %}
+                <div class="rounded-lg border p-4 sm:col-span-3">
+                    <svg viewBox="0 0 600 120" class="h-28 w-full text-primary" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M0 95 C60 90 90 70 150 74 S240 40 300 52 S390 20 450 30 S540 8 600 12" fill="none" stroke="currentColor" stroke-width="2.5" pathLength="1" class="[stroke-dasharray:1] [stroke-dashoffset:1] motion-safe:animate-[tb-draw_2.4s_ease-out_0.4s_forwards] motion-reduce:[stroke-dashoffset:0]"/>
+                        <path d="M0 95 C60 90 90 70 150 74 S240 40 300 52 S390 20 450 30 S540 8 600 12 V120 H0Z" fill="currentColor" fill-opacity="0.08"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    {%- endblock -%}
+</section>

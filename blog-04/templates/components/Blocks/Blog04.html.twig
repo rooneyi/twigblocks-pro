@@ -1,0 +1,44 @@
+{#- Articles en cartes horizontales : couverture à gauche, texte à droite, sur un fond quadrillé fin. -#}
+{%- props
+    ## string Heading. The part before the separator is shown in a lighter tone.
+    title = 'Le journal|de l’équipe',
+    ## array<array{date: string, title: string, excerpt: string, href: string, cover?: string, authors: array<string>}> Articles.
+    posts = [
+        {date: '18 nov. 2026', title: 'Envoyer ses relances sans passer pour un huissier', excerpt: 'Nous avons testé trois tons de relance sur 2 000 factures impayées. Le plus efficace n’est pas le plus ferme : il rappelle le service rendu, propose un lien de paiement et fixe une date précise.', href: '#', authors: ['Clara Fontaine', 'Thomas Girard']},
+        {date: '4 nov. 2026', title: 'Les secteurs qui paient le plus tard, et comment s’en protéger', excerpt: 'BTP, collectivités, grands comptes : les délais moyens observés sur notre plateforme, et les clauses qui raccourcissent vraiment l’attente.', href: '#', authors: ['Aïcha Mbaye']},
+    ],
+    ## array<string> Cover images for posts without a cover.
+    images = [],
+    ## array<string> Author photos, in the order authors appear.
+    avatars = []
+-%}
+{%- set parts = title|split('|') -%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-5xl">
+        <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl"><span class="text-muted-foreground">{{ parts[0] }}</span>{% if parts[1] is defined %} {{ parts[1] }}{% endif %}</h2>
+        <div class="relative mt-12 space-y-10 py-6 before:absolute before:inset-y-0 before:left-[33%] before:hidden before:w-px before:bg-border md:before:block">
+            {%- set a = 0 -%}
+            {%- for p in posts %}
+                {%- set cover = p.cover ?? images[loop.index0] ?? null %}
+                <article class="group relative grid overflow-hidden rounded-xl border bg-card shadow-xs md:grid-cols-[1fr_2fr]">
+                    <div class="aspect-square overflow-hidden bg-muted md:m-1.5 md:rounded-lg">
+                        {%- if cover %}<img src="{{ cover }}" alt="" loading="lazy" class="size-full object-cover transition duration-700 group-hover:scale-[1.03] motion-reduce:group-hover:scale-100">{% endif %}
+                    </div>
+                    <div class="flex flex-col p-6 md:p-8">
+                        <p class="text-sm text-muted-foreground"><time>{{ p.date }}</time></p>
+                        <h3 class="mt-4 text-xl font-semibold text-pretty"><a href="{{ p.href }}" class="after:absolute after:inset-0">{{ p.title }}</a></h3>
+                        <p class="mt-4 text-muted-foreground">{{ p.excerpt }}</p>
+                        <div class="mt-auto flex items-end justify-between pt-8">
+                            <ul class="space-y-1.5 text-sm">
+                                {%- for au in p.authors %}{% set photo = avatars[a] ?? null %}{% set a = a + 1 %}
+                                    <li class="flex items-center gap-2">{% if photo %}<img src="{{ photo }}" alt="" class="size-6 rounded-full object-cover" loading="lazy">{% else %}<span class="grid size-6 place-items-center rounded-full bg-muted text-[10px] font-medium">{{ au|split(' ')|map(w => w|first)|join|slice(0, 2) }}</span>{% endif %}{{ au }}</li>
+                                {%- endfor %}
+                            </ul>
+                            <span class="flex items-center text-sm font-medium text-primary">Lire<twig:ux:icon name="lucide:chevron-right" class="size-4 transition-transform group-hover:translate-x-0.5" /></span>
+                        </div>
+                    </div>
+                </article>
+            {%- endfor %}
+        </div>
+    </div>
+</section>

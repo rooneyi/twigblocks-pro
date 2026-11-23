@@ -1,0 +1,28 @@
+{#- Appel à l'action sur motif en losanges (carrés renversés), avec bordure animée. Nécessite le bloc gratuit Pattern. -#}
+{%- props
+    ## string Heading.
+    title = 'Votre prochaine facture partira toute seule',
+    ## string Supporting text.
+    description = '14 jours d’essai, sans carte bancaire. Import de vos clients en deux minutes.',
+    ## string Primary button label.
+    primaryLabel = 'Créer mon compte',
+    ## string Primary button target.
+    primaryHref = '#',
+    ## string Secondary button label.
+    secondaryLabel = 'Parler à l’équipe',
+    ## string Secondary button target.
+    secondaryHref = '#'
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="tb-beam relative mx-auto max-w-5xl overflow-hidden rounded-3xl border bg-card px-6 py-16 text-center sm:px-16">
+        <twig:Blocks:Pattern type="diamond" size="36" fade="radial" class="text-primary/20" />
+        <div class="relative">
+            <h2 class="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <p class="mx-auto mt-4 max-w-lg text-muted-foreground">{{ description }}</p>
+            <div class="mt-8 flex flex-wrap justify-center gap-3">
+                <twig:Button as="a" size="lg" href="{{ primaryHref }}" class="h-10 px-5">{{ primaryLabel }}</twig:Button>
+                <twig:Button as="a" size="lg" variant="outline" href="{{ secondaryHref }}" class="h-10 bg-background px-5">{{ secondaryLabel }}</twig:Button>
+            </div>
+        </div>
+    </div>
+</section>

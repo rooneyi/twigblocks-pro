@@ -1,0 +1,42 @@
+{%- props
+    ## string Current plan name.
+    plan = 'Pro',
+    ## string Renewal sentence.
+    renewal = 'Renouvellement le 1er décembre 2026 · 19 € / mois',
+    ## array<array{label: string, used: int, limit: int, unit?: string}> Metered resources.
+    meters = [
+        {label: 'Factures envoyées', used: 84, limit: 100},
+        {label: 'Utilisateurs', used: 2, limit: 3},
+        {label: 'Stockage des pièces jointes', used: 3.6, limit: 5, unit: 'Go'},
+    ],
+    ## string Upgrade link target.
+    upgradeHref = '#'
+-%}
+<section {{ attributes.defaults({class: 'p-4 sm:p-6'|tailwind_classes}) }}>
+    <twig:Card class="mx-auto max-w-2xl">
+        <twig:Card:Header>
+            <twig:Card:Title>Formule {{ plan }}</twig:Card:Title>
+            <twig:Card:Description>{{ renewal }}</twig:Card:Description>
+            <twig:Card:Action><twig:Button as="a" href="{{ upgradeHref }}" variant="outline">Changer de formule</twig:Button></twig:Card:Action>
+        </twig:Card:Header>
+        <twig:Card:Content class="space-y-5">
+            {%- for m in meters %}
+                {%- set pct = m.limit > 0 ? (m.used / m.limit * 100)|round : 0 %}
+                <div>
+                    <div class="flex justify-between text-sm">
+                        <span id="meter-{{ loop.index }}">{{ m.label }}</span>
+                        <span class="tabular-nums {{ pct >= 80 ? 'font-medium text-amber-700 dark:text-amber-400' : 'text-muted-foreground' }}">{{ m.used|number_format(m.used == m.used|round ? 0 : 1, ',', ' ') }} / {{ m.limit }}{{ m.unit is defined ? ' ' ~ m.unit : '' }}</span>
+                    </div>
+                    <twig:Progress value="{{ pct }}" class="mt-2 h-2 {{ pct >= 80 ? '[&>*]:bg-amber-500' : '' }}" aria-labelledby="meter-{{ loop.index }}" />
+                </div>
+            {%- endfor %}
+            {%- if meters|filter(m => m.limit > 0 and m.used / m.limit >= 0.8)|length %}
+                <twig:Alert>
+                    <twig:ux:icon name="lucide:triangle-alert" />
+                    <twig:Alert:Title>Vous approchez de la limite</twig:Alert:Title>
+                    <twig:Alert:Description>Au-delà, les nouveaux envois sont mis en attente. Passez à la formule supérieure pour continuer sans interruption.</twig:Alert:Description>
+                </twig:Alert>
+            {%- endif %}
+        </twig:Card:Content>
+    </twig:Card>
+</section>

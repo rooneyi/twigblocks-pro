@@ -1,0 +1,72 @@
+{#- Démonstration de code à onglets (Twig, PHP, Stimulus, terminal) dans une fenêtre, sur un cadre à lignes fines. Contrôleurs : tabs, highlight, copy. -#}
+{%- props
+    ## string Heading.
+    title = 'Une balise Twig, une page entière',
+    ## string Supporting text.
+    description = 'Vos blocs restent des composants Symfony : props typées, traductions, Stimulus. Rien à apprendre, rien à compiler.',
+    ## array<array{label: string, icon: string, lang: string, code: string}>|null Tabs. Leave null to show the default Symfony example. Write "[[twig:" instead of "<twig:" in code: Twig would otherwise render the component.
+    tabs = null
+-%}
+{%- if tabs is null -%}
+    {%- set t1 %}{% verbatim %}{# templates/home.html.twig #}
+[[twig:Blocks:Hero01
+    title="{{ 'home.title'|trans }}"
+    :features="features"
+/>
+[[twig:Blocks:Pricing02 :plans="plans" yearly />
+[[twig:Blocks:Faq01 />{% endverbatim %}{% endset -%}
+    {%- set t2 %}{% verbatim %}#[Route('/', name: 'home')]
+public function home(PlanRepository $plans): Response
+{
+    return $this->render('home.html.twig', [
+        'plans' => $plans->findPublished(),
+        'features' => ['Factures', 'Relances', 'Exports'],
+    ]);
+}{% endverbatim %}{% endset -%}
+    {%- set t3 %}{% verbatim %}import { Controller } from '@hotwired/stimulus';
+
+export default class extends Controller {
+    static targets = ['price'];
+
+    toggle(event) {
+        const yearly = event.target.checked;
+        this.priceTargets.forEach((p) => {
+            p.textContent = yearly ? p.dataset.yearly : p.dataset.monthly;
+        });
+    }
+}{% endverbatim %}{% endset -%}
+    {%- set t4 %}{% verbatim %}$ php bin/console ux:install button card --kit=shadcn
+$ cp -r ~/Downloads/twigblocks-pro/hero-01/templates templates/
+$ symfony serve -d
+  [OK] Web server listening on https://127.0.0.1:8000{% endverbatim %}{% endset -%}
+    {%- set tabs = [{label: 'home.html.twig', icon: 'lucide:file-code', lang: 'twig', code: t1}, {label: 'HomeController.php', icon: 'lucide:braces', lang: 'php', code: t2}, {label: 'billing_controller.js', icon: 'lucide:layers', lang: 'js', code: t3}, {label: 'Terminal', icon: 'lucide:terminal', lang: 'shell', code: t4}] -%}
+{%- endif -%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-5xl">
+        <div class="mx-auto max-w-2xl text-center">
+            <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+        </div>
+        <div class="relative mt-14 px-0 py-10 sm:px-10">
+            {#- Cadre à lignes fines qui dépassent, comme un plan. -#}
+            <div class="pointer-events-none absolute inset-x-[-2rem] top-0 h-px bg-border" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute inset-x-[-2rem] bottom-0 h-px bg-border" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute inset-y-[-2rem] left-0 hidden w-px bg-border sm:block" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute inset-y-[-2rem] right-0 hidden w-px bg-border sm:block" aria-hidden="true"></div>
+            <div class="overflow-hidden rounded-xl border bg-card shadow-lg shadow-black/5" data-controller="tabs highlight">
+                <div class="flex items-center gap-1.5 px-4 pt-3" aria-hidden="true"><span class="size-2.5 rounded-full bg-muted-foreground/25"></span><span class="size-2.5 rounded-full bg-muted-foreground/25"></span><span class="size-2.5 rounded-full bg-muted-foreground/25"></span></div>
+                <div class="flex gap-1 overflow-x-auto px-3 pt-3 pb-2" role="tablist" aria-label="Fichiers">
+                    {%- for t in tabs %}
+                        <button type="button" role="tab" id="code01-tab-{{ loop.index }}" aria-controls="code01-panel-{{ loop.index }}" aria-selected="{{ loop.first ? 'true' : 'false' }}" tabindex="{{ loop.first ? 0 : -1 }}" data-tabs-target="tab" data-action="tabs#select" class="flex shrink-0 items-center gap-2 rounded-md px-3 py-1.5 text-sm text-muted-foreground transition aria-selected:bg-muted aria-selected:font-medium aria-selected:text-foreground hover:text-foreground"><twig:ux:icon name="{{ t.icon }}" class="size-4" />{{ t.label }}</button>
+                    {%- endfor %}
+                </div>
+                {%- for t in tabs %}
+                    <div role="tabpanel" id="code01-panel-{{ loop.index }}" aria-labelledby="code01-tab-{{ loop.index }}" data-tabs-target="panel" {{ loop.first ? '' : 'hidden' }} class="relative border-t" data-controller="copy">
+                        <button type="button" data-action="copy#copy" data-copy-target="button" class="absolute top-3 right-3 rounded-md border bg-background px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground">Copier</button>
+                        <pre class="min-h-64 overflow-x-auto p-5 font-mono text-[13px] leading-6"><code data-lang="{{ t.lang }}" data-copy-target="source">{{ t.code|trim|replace({'[[': '<'}) }}</code></pre>
+                    </div>
+                {%- endfor %}
+            </div>
+        </div>
+    </div>
+</section>

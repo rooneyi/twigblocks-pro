@@ -1,0 +1,52 @@
+{#- « Moments à partager » : temps forts de l'année à gauche, collage de polaroïds à droite. -#}
+{%- props
+    ## string Heading.
+    title = 'Des moments qui comptent',
+    ## string Supporting text.
+    description = 'Une équipe ne se construit pas seulement en réunion : elle se construit dans les moments partagés.',
+    ## array<array{period: string, title: string, text: string}> Highlights.
+    moments = [
+        {period: 'T1', title: 'Hackathon d’hiver', text: '48 heures pour construire, coder et rire ensemble.'},
+        {period: 'T2', title: 'Retraite de printemps', text: 'Cohésion et stratégie au bord du lac d’Annecy.'},
+        {period: 'T3', title: 'Lancement de la v3', text: 'Notre plus grosse version, avec 50 nouveautés.'},
+        {period: 'T4', title: 'Fête de fin d’année', text: 'Une année de plus à célébrer, à Kinshasa cette fois.'},
+    ],
+    ## array<array{caption: string, photo?: string}> Photos (5).
+    photos = [
+        {caption: 'Gagnants du hackathon, janv. 2026'},
+        {caption: 'Retraite à Annecy, avr. 2026'},
+        {caption: 'Jour de lancement, sept. 2026'},
+        {caption: 'Fête de fin d’année, déc. 2025'},
+        {caption: 'Et après ? déc. 2026'},
+    ],
+    ## array<string> Photos used, in order, by items without a photo.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-2">
+        <div>
+            <span class="grid size-10 place-items-center rounded-xl border bg-card shadow-xs"><twig:ux:icon name="lucide:sparkles" class="size-5 text-primary" /></span>
+            <h2 class="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+            <dl class="mt-10 divide-y border-y">
+                {%- for m in moments %}
+                    <div class="grid grid-cols-[2.5rem_9rem_1fr] gap-3 py-4 text-sm">
+                        <dt class="font-mono text-xs text-muted-foreground">{{ m.period }}</dt>
+                        <dd class="font-medium">{{ m.title }}</dd>
+                        <dd class="text-muted-foreground">{{ m.text }}</dd>
+                    </div>
+                {%- endfor %}
+            </dl>
+        </div>
+        {%- set layout = ['col-span-1 -rotate-3', 'col-span-1 rotate-2 mt-6', 'col-span-2 -rotate-1', 'col-span-1 rotate-2', 'col-span-1 -rotate-2 mt-4'] -%}
+        <ul class="grid grid-cols-2 gap-4" aria-label="Photos de l’équipe">
+            {%- for p in photos %}
+                {%- set photo = p.photo ?? images[loop.index0] ?? null %}
+                <li class="{{ layout[loop.index0 % 5] }} rounded-sm bg-white p-2.5 pb-2 shadow-lg ring-1 ring-black/5 transition hover:rotate-0 dark:bg-zinc-100">
+                    {%- if photo %}<img src="{{ photo }}" alt="" loading="lazy" class="{{ loop.index == 3 ? 'aspect-[16/9]' : 'aspect-[4/5]' }} w-full object-cover grayscale">{% else %}<div class="aspect-[4/5] bg-zinc-200"></div>{% endif %}
+                    <p class="mt-2 font-mono text-[11px] text-zinc-600">{{ p.caption }}</p>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,66 @@
+{#- Facture imprimable : la mise en page reste propre avec window.print() (classes print:). Exemple de contenu. -#}
+{%- props
+    ## string Invoice number.
+    number = 'F-2026-0142',
+    ## array{name: string, address: string, siret: string} Seller.
+    seller = {name: 'Studio Durand', address: '12 rue des Lilas, 69003 Lyon', siret: 'SIRET 000 000 000 00000'},
+    ## array{name: string, address: string} Customer.
+    customer = {name: 'Atelier Moreau', address: '4 place Bellecour, 69002 Lyon'},
+    ## string Issue date.
+    issued = '18 novembre 2026',
+    ## string Due date.
+    due = '30 novembre 2026',
+    ## array<array{label: string, qty: float, price: float}> Lines (price excluding VAT).
+    lines = [
+        {label: 'Refonte du site vitrine', qty: 1, price: 2000},
+        {label: 'Maintenance mensuelle', qty: 3, price: 125},
+        {label: 'Hébergement annuel', qty: 1, price: 150},
+    ],
+    ## float VAT rate in percent.
+    vat = 20,
+    ## string Currency suffix.
+    currency = ' €'
+-%}
+{%- set subtotal = lines|reduce((t, l) => t + l.qty * l.price, 0) -%}
+{%- set tax = subtotal * vat / 100 -%}
+<article {{ attributes.defaults({class: 'mx-auto max-w-3xl bg-background p-6 sm:p-10 print:p-0'|tailwind_classes}) }}>
+    <header class="flex flex-wrap items-start justify-between gap-6">
+        <div>
+            <p class="text-lg font-semibold">{{ seller.name }}</p>
+            <p class="mt-1 text-sm text-muted-foreground">{{ seller.address }}<br>{{ seller.siret }}</p>
+        </div>
+        <div class="text-end">
+            <h1 class="text-2xl font-semibold tracking-tight">Facture</h1>
+            <p class="mt-1 text-sm text-muted-foreground tabular-nums">{{ number }}</p>
+        </div>
+    </header>
+    <div class="mt-10 grid gap-6 text-sm sm:grid-cols-3">
+        <div><p class="text-muted-foreground">Facturé à</p><p class="mt-1 font-medium">{{ customer.name }}</p><p class="text-muted-foreground">{{ customer.address }}</p></div>
+        <div><p class="text-muted-foreground">Date d’émission</p><p class="mt-1 font-medium">{{ issued }}</p></div>
+        <div><p class="text-muted-foreground">Échéance</p><p class="mt-1 font-medium">{{ due }}</p></div>
+    </div>
+    <table class="mt-10 w-full text-sm">
+        <thead class="border-b text-muted-foreground">
+            <tr><th scope="col" class="py-2 text-start font-normal">Désignation</th><th scope="col" class="w-16 py-2 text-end font-normal">Qté</th><th scope="col" class="w-28 py-2 text-end font-normal">Prix HT</th><th scope="col" class="w-28 py-2 text-end font-normal">Total HT</th></tr>
+        </thead>
+        <tbody>
+            {%- for l in lines %}
+                <tr class="border-b"><td class="py-3">{{ l.label }}</td><td class="py-3 text-end tabular-nums">{{ l.qty }}</td><td class="py-3 text-end tabular-nums">{{ (l.price)|number_format(2, ',', ' ') }}{{ currency }}</td><td class="py-3 text-end tabular-nums">{{ (l.qty * l.price)|number_format(2, ',', ' ') }}{{ currency }}</td></tr>
+            {%- endfor %}
+        </tbody>
+    </table>
+    <dl class="ms-auto mt-6 w-full max-w-xs space-y-2 text-sm">
+        <div class="flex justify-between"><dt class="text-muted-foreground">Total HT</dt><dd class="tabular-nums">{{ (subtotal)|number_format(2, ',', ' ') }}{{ currency }}</dd></div>
+        <div class="flex justify-between"><dt class="text-muted-foreground">TVA {{ vat }} %</dt><dd class="tabular-nums">{{ (tax)|number_format(2, ',', ' ') }}{{ currency }}</dd></div>
+        <div class="flex justify-between border-t pt-2 text-base font-semibold"><dt>Total TTC</dt><dd class="tabular-nums">{{ (subtotal + tax)|number_format(2, ',', ' ') }}{{ currency }}</dd></div>
+    </dl>
+    <footer class="mt-12 border-t pt-6 text-xs text-muted-foreground">
+        {%- block footer -%}
+            Paiement à réception par virement ou carte. Pénalités de retard : trois fois le taux d’intérêt légal. Indemnité forfaitaire pour frais de recouvrement : 40 €.
+        {%- endblock -%}
+    </footer>
+    <div class="mt-6 flex justify-end gap-2 print:hidden">
+        <twig:Button variant="outline" onclick="window.print()"><twig:ux:icon name="lucide:printer" />Imprimer</twig:Button>
+        <twig:Button><twig:ux:icon name="lucide:credit-card" />Payer {{ (subtotal + tax)|number_format(2, ',', ' ') }}{{ currency }}</twig:Button>
+    </div>
+</article>

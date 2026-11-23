@@ -1,0 +1,36 @@
+{#- Équipe en cartes photo : portrait en noir et blanc qui reprend ses couleurs au survol. -#}
+{%- props
+    ## string Heading.
+    title = 'Une équipe dirigeante|qui a déjà fait ses preuves',
+    ## array<array{name: string, role: string, photo?: string}> Members.
+    members = [
+        {name: 'Aïcha Mbaye', role: 'Cofondatrice, présidente'},
+        {name: 'Kevin Mulamba', role: 'Cofondateur, directeur technique'},
+        {name: 'Clara Fontaine', role: 'Responsable produit'},
+        {name: 'Thomas Girard', role: 'Responsable ingénierie'},
+        {name: 'Grace Ilunga', role: 'Responsable design'},
+        {name: 'Hugo Lambert', role: 'Responsable commercial'}
+    ],
+    ## array<string> Photos used, in order, by members without a photo.
+    images = []
+-%}
+{%- set parts = title|split('|') -%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-5xl">
+        <h2 class="max-w-md text-3xl font-semibold tracking-tight sm:text-4xl">{{ parts[0] }}{% if parts[1] is defined %}<br><span class="text-muted-foreground">{{ parts[1] }}</span>{% endif %}</h2>
+        <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {%- for m in members %}
+                {%- set photo = m.photo ?? images[loop.index0] ?? null %}
+                <li class="group rounded-2xl border bg-card p-1.5 shadow-xs">
+                    <div class="aspect-square overflow-hidden rounded-xl bg-muted">
+                        {%- if photo %}<img src="{{ photo }}" alt="{{ m.name }}" loading="lazy" class="size-full object-cover object-top grayscale transition duration-500 group-hover:scale-[1.03] group-hover:grayscale-0 motion-reduce:group-hover:scale-100">{% endif %}
+                    </div>
+                    <div class="px-3 pt-3 pb-2">
+                        <h3 class="font-medium">{{ m.name }}</h3>
+                        <p class="text-sm text-muted-foreground">{{ m.role }}</p>
+                    </div>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

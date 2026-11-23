@@ -1,0 +1,31 @@
+{%- props
+    ## array<array{label: string, value: string, change: string, trend: 'up'|'down', hint: string}> KPIs.
+    stats = [
+        {label: 'Chiffre d’affaires', value: '48 250 €', change: '+12,4 %', trend: 'up', hint: 'vs. octobre'},
+        {label: 'En attente de paiement', value: '9 870 €', change: '-8,1 %', trend: 'down', hint: '14 factures'},
+        {label: 'Délai moyen de paiement', value: '18 j', change: '-6 j', trend: 'down', hint: 'sur 90 jours'},
+        {label: 'Nouveaux clients', value: '23', change: '+4', trend: 'up', hint: 'ce mois-ci'},
+    ],
+    ## array<string> Labels of the stats where a decrease is good news (shown in green).
+    lowerIsBetter = ['En attente de paiement', 'Délai moyen de paiement']
+-%}
+<section {{ attributes.defaults({class: 'p-4 sm:p-6'|tailwind_classes}) }}>
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {%- for stat in stats %}
+            {%- set good = (stat.trend == 'up') != (stat.label in lowerIsBetter) %}
+            <twig:Card size="sm">
+                <twig:Card:Header>
+                    <twig:Card:Description>{{ stat.label }}</twig:Card:Description>
+                    <twig:Card:Title class="text-2xl font-semibold tabular-nums">{{ stat.value }}</twig:Card:Title>
+                    <twig:Card:Action>
+                        <twig:Badge variant="outline" class="{{ good ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400' }}">
+                            <twig:ux:icon name="{{ stat.trend == 'up' ? 'lucide:trending-up' : 'lucide:trending-down' }}" />
+                            {{ stat.change }}
+                        </twig:Badge>
+                    </twig:Card:Action>
+                </twig:Card:Header>
+                <twig:Card:Footer class="text-xs text-muted-foreground">{{ stat.hint }}</twig:Card:Footer>
+            </twig:Card>
+        {%- endfor %}
+    </div>
+</section>

@@ -1,0 +1,44 @@
+{#- Hero secondaire : grand titre à gauche, mosaïque de portraits à droite et indicateur de confiance. -#}
+{%- props
+    ## string Heading.
+    title = 'Des experts-comptables qui répondent en moins d’une heure',
+    ## string Supporting text.
+    description = 'Une équipe de 40 personnes à Lyon, Bruxelles et Kinshasa, joignable par chat, téléphone ou visio, du lundi au samedi.',
+    ## string Primary button label.
+    primaryLabel = 'Parler à un expert',
+    ## string Primary button URL.
+    primaryHref = '#',
+    ## string Secondary link label.
+    secondaryLabel = 'Voir les tarifs',
+    ## string Secondary link URL.
+    secondaryHref = '#',
+    ## string Trust line under the buttons.
+    trust = '4,8/5 sur 1 200 avis clients',
+    ## array<string> Portrait photos (4 or more). Without photos, tinted tiles are shown.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+        <div>
+            <h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{{ title }}</h1>
+            <p class="mt-6 max-w-lg text-lg text-muted-foreground">{{ description }}</p>
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+                <twig:Button as="a" href="{{ primaryHref }}" size="lg">{{ primaryLabel }}</twig:Button>
+                <twig:Button as="a" href="{{ secondaryHref }}" size="lg" variant="ghost">{{ secondaryLabel }}</twig:Button>
+            </div>
+            <div class="mt-10 flex items-center gap-3">
+                <span class="flex -space-x-2">
+                    {%- for i in 0..4 %}{% if images[i + 4] is defined %}<img src="{{ images[i + 4] }}" alt="" class="size-8 rounded-full object-cover ring-2 ring-background" loading="lazy">{% else %}<span class="size-8 rounded-full bg-muted ring-2 ring-background"></span>{% endif %}{% endfor %}
+                </span>
+                <span class="text-sm"><span class="text-amber-500" aria-hidden="true">★★★★★</span> <span class="text-muted-foreground">{{ trust }}</span></span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4" aria-hidden="true">
+            {%- for i in 0..3 %}
+                <div class="overflow-hidden rounded-2xl border bg-muted {{ i is odd ? 'translate-y-10' : '' }}">
+                    {%- if images[i] is defined %}<img src="{{ images[i] }}" alt="" loading="lazy" class="aspect-[4/5] w-full object-cover grayscale transition duration-500 hover:grayscale-0">{% else %}<div class="aspect-[4/5]"></div>{% endif %}
+                </div>
+            {%- endfor %}
+        </div>
+    </div>
+</section>

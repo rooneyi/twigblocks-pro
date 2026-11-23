@@ -1,0 +1,41 @@
+{#- Liste d'articles compacte : date, titre, rubrique, auteurs. -#}
+{%- props
+    ## string Heading. The part before the separator is shown in a lighter tone.
+    title = 'Dernières|actualités',
+    ## array<array{date: string, title: string, category: string, href: string, authors: array<string>}> Articles.
+    posts = [
+        {date: '18 nov. 2026', title: 'Envoyer ses relances sans passer pour un huissier', category: 'Guides', href: '#', authors: ['Clara Fontaine']},
+        {date: '12 nov. 2026', title: 'Nouveau : les factures récurrentes en deux clics', category: 'Produit', href: '#', authors: ['Thomas Girard', 'Aïcha Mbaye']},
+        {date: '4 nov. 2026', title: 'Ce que nous avons appris en passant à la facture électronique', category: 'Guides', href: '#', authors: ['Kevin Mulamba']},
+        {date: '28 oct. 2026', title: 'Nous ouvrons un bureau à Kinshasa', category: 'Équipe', href: '#', authors: ['Grace Ilunga']},
+        {date: '21 oct. 2026', title: 'Prévoir sa trésorerie à 90 jours avec un simple tableau', category: 'Guides', href: '#', authors: ['Kevin Mulamba', 'Hugo Lambert']},
+        {date: '9 oct. 2026', title: 'Export comptable : tous les formats sont désormais gratuits', category: 'Annonces', href: '#', authors: ['Nadège Kabeya']},
+    ],
+    ## array<string> Author photos, in the order authors appear.
+    avatars = []
+-%}
+{%- set parts = title|split('|') -%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-5xl">
+        <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl"><span class="text-muted-foreground">{{ parts[0] }}</span>{% if parts[1] is defined %} {{ parts[1] }}{% endif %}</h2>
+        <ul class="mt-12 border-t">
+            {%- set a = 0 -%}
+            {%- for p in posts %}
+                <li class="group relative grid gap-x-6 gap-y-2 border-b py-5 sm:grid-cols-[7rem_1fr_7rem_auto] sm:items-center">
+                    <time class="text-sm text-muted-foreground tabular-nums">{{ p.date }}</time>
+                    <a href="{{ p.href }}" class="font-medium text-pretty after:absolute after:inset-0 group-hover:underline group-hover:underline-offset-4">{{ p.title }}</a>
+                    <span class="hidden text-sm text-muted-foreground sm:block">{{ p.category }}</span>
+                    <span class="flex items-center gap-3">
+                        <span class="flex -space-x-2">
+                            {%- for au in p.authors %}
+                                {%- set photo = avatars[a] ?? null %}{% set a = a + 1 %}
+                                {%- if photo %}<img src="{{ photo }}" alt="{{ au }}" title="{{ au }}" class="size-7 rounded-full object-cover ring-2 ring-background" loading="lazy">{% else %}<span title="{{ au }}" class="grid size-7 place-items-center rounded-full bg-muted text-[10px] font-medium ring-2 ring-background">{{ au|split(' ')|map(w => w|first)|join|slice(0, 2) }}</span>{% endif %}
+                            {%- endfor %}
+                        </span>
+                        <span class="flex items-center text-sm font-medium text-primary">Lire<twig:ux:icon name="lucide:chevron-right" class="size-4" /></span>
+                    </span>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,21 @@
+{#- Landing page complète, claire. Nécessite les blocs Pro listés dans le README de la recette. -#}
+{%- props
+    ## string Brand name passed to the navigation and footer.
+    brand = 'Lumen'
+-%}
+<div {{ attributes.defaults({class: 'bg-background text-foreground'|tailwind_classes}) }}>
+    <twig:Blocks:Navbar01 brand="{{ brand }}" class="sticky top-0 z-40" />
+    <main>
+        {%- block hero %}<twig:Blocks:Hero02 />{% endblock -%}
+        <twig:Blocks:LogoCloud01 class="border-y bg-muted/30" />
+        {%- block sections -%}
+            <twig:Blocks:Bento01 />
+            <twig:Blocks:Integrations01 />
+            <twig:Blocks:Testimonials01 class="bg-muted/30" />
+            <twig:Blocks:Pricing01 />
+            <twig:Blocks:Faq01 id="landing-faq" />
+        {%- endblock -%}
+        <twig:Blocks:Cta01 />
+    </main>
+    <twig:Blocks:Footer01 brand="{{ brand }}" />
+</div>

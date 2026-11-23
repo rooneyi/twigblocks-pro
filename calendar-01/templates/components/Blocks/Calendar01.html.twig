@@ -1,0 +1,56 @@
+{%- props
+    ## string Any date in the month to display (Y-m-d).
+    month = '2026-11-01',
+    ## string Today (Y-m-d), highlighted.
+    today = '2026-11-20',
+    ## array<array{date: string, title: string, tone?: 'primary'|'muted'|'destructive'}> Events.
+    events = [
+        {date: '2026-11-03', title: 'Point client Moreau'},
+        {date: '2026-11-10', title: 'Échéance TVA', tone: 'destructive'},
+        {date: '2026-11-18', title: 'Envoi factures', tone: 'muted'},
+        {date: '2026-11-20', title: 'Démo Agence Nord'},
+        {date: '2026-11-20', title: 'Relances J+7', tone: 'muted'},
+        {date: '2026-11-27', title: 'Clôture du mois'},
+    ],
+    ## array<string> Weekday names, starting Monday.
+    weekdays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+    ## string|null Month title. Defaults to the month in French.
+    title = null
+-%}
+{%- set first = month|date('Y-m-01') -%}
+{%- set offset = first|date('N') - 1 -%}
+{%- set start = first|date_modify('-' ~ offset ~ ' days') -%}
+{%- set cells = ((offset + first|date('t')) / 7)|round(0, 'ceil') * 7 -%}
+{%- set monthNames = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'] -%}
+{%- set tones = {primary: 'bg-primary/10 text-primary', muted: 'bg-muted text-muted-foreground', destructive: 'bg-destructive/10 text-destructive'} -%}
+<section {{ attributes.defaults({class: 'p-4 sm:p-6'|tailwind_classes}) }}>
+    <header class="mb-4 flex items-center gap-2">
+        <h2 class="text-xl font-semibold capitalize">{{ title ?? (monthNames[first|date('n') - 1] ~ ' ' ~ first|date('Y')) }}</h2>
+        <div class="ms-auto flex gap-1">
+            <twig:Button variant="outline" size="icon" aria-label="Mois précédent"><twig:ux:icon name="lucide:chevron-left" class="rtl:rotate-180" /></twig:Button>
+            <twig:Button variant="outline">Aujourd’hui</twig:Button>
+            <twig:Button variant="outline" size="icon" aria-label="Mois suivant"><twig:ux:icon name="lucide:chevron-right" class="rtl:rotate-180" /></twig:Button>
+        </div>
+        <twig:Button><twig:ux:icon name="lucide:plus" />Événement</twig:Button>
+    </header>
+    <div class="overflow-hidden rounded-xl border">
+        <div class="grid grid-cols-7 border-b bg-muted/50 text-xs text-muted-foreground" aria-hidden="true">
+            {%- for d in weekdays %}<div class="px-2 py-2">{{ d }}</div>{% endfor %}
+        </div>
+        <ol class="grid grid-cols-7">
+            {%- for i in 0..(cells - 1) %}
+                {%- set day = start|date_modify('+' ~ i ~ ' days') -%}
+                {%- set ymd = day|date('Y-m-d') -%}
+                {%- set inMonth = day|date('m') == first|date('m') -%}
+                <li class="min-h-24 border-e border-b p-1.5 text-xs [&:nth-child(7n)]:border-e-0 {{ inMonth ? '' : 'bg-muted/30 text-muted-foreground' }}">
+                    <time datetime="{{ ymd }}" class="grid size-6 place-items-center rounded-full {{ ymd == today ? 'bg-primary font-semibold text-primary-foreground' : '' }}">{{ day|date('j') }}</time>
+                    <ul class="mt-1 space-y-1">
+                        {%- for e in events|filter(e => e.date == ymd) %}
+                            <li class="truncate rounded px-1.5 py-0.5 {{ tones[e.tone ?? 'primary'] }}">{{ e.title }}</li>
+                        {%- endfor %}
+                    </ul>
+                </li>
+            {%- endfor %}
+        </ol>
+    </div>
+</section>

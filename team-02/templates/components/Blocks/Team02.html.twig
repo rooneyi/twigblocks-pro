@@ -1,0 +1,52 @@
+{#- Cartes d'équipe à bordure fine avec motif hexagonal et liens. Contenu de démonstration : remplacez par votre équipe. -#}
+{%- props
+    ## string Heading.
+    title = 'L’équipe',
+    ## string Supporting text.
+    description = 'Cinq personnes, un seul objectif : que vous soyez payé à temps.',
+    ## array<array{name: string, role: string, bio: string, website?: string, github?: string, photo?: string}> Members.
+    members = [
+        {name: 'Lucien Ntwali', role: 'Fondateur', bio: 'Définit la vision produit et parle chaque semaine avec les clients.', website: '#'},
+        {name: 'Augustin Paisible', role: 'Directeur technique', bio: 'Veille à ce que chaque facture parte, même un 31 décembre à minuit.', website: '#', github: '#'},
+        {name: 'Jonathan Bolibenga', role: 'Designer produit', bio: 'Transforme les retours clients en écrans simples.', website: '#'},
+        {name: 'Simplice Bondo', role: 'Développeur Symfony', bio: 'Construit l’API, les intégrations et les exports comptables.', github: '#'},
+        {name: 'Philemon Kambale', role: 'Responsable commercial', bio: 'Accompagne les cabinets et les agences dans leur démarrage.', website: '#'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }} data-controller="reveal">
+    <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+            <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+        </div>
+        <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {%- for m in members %}
+                <li data-reveal class="group overflow-hidden rounded-xl border bg-card">
+                    <div class="relative grid h-40 place-items-center overflow-hidden border-b bg-muted/40">
+                        <twig:Blocks:Pattern type="hex" size="26" fade="radial" class="text-foreground/10 transition-colors duration-500 group-hover:text-primary/25" />
+                        {%- if m.photo is defined %}
+                            <img src="{{ m.photo }}" alt="" class="relative size-20 rounded-full object-cover ring-4 ring-background" loading="lazy">
+                        {%- else %}
+                            <span class="relative grid size-20 place-items-center rounded-full bg-background text-xl font-semibold ring-1 ring-border transition-transform duration-300 group-hover:scale-105 motion-reduce:group-hover:scale-100">{{ m.name|split(' ')|map(w => w|first)|join|slice(0, 2)|upper }}</span>
+                        {%- endif %}
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-start justify-between gap-3">
+                            <div><h3 class="font-medium">{{ m.name }}</h3><p class="text-sm text-primary">{{ m.role }}</p></div>
+                            <div class="flex gap-1">
+                                {%- if m.website is defined %}<twig:Button as="a" href="{{ m.website }}" variant="ghost" size="icon-sm" aria-label="Site de {{ m.name }}"><twig:ux:icon name="lucide:globe" /></twig:Button>{% endif %}
+                                {%- if m.github is defined %}<twig:Button as="a" href="{{ m.github }}" variant="ghost" size="icon-sm" aria-label="GitHub de {{ m.name }}"><twig:ux:icon name="simple-icons:github" /></twig:Button>{% endif %}
+                            </div>
+                        </div>
+                        <p class="mt-3 text-sm text-muted-foreground">{{ m.bio }}</p>
+                    </div>
+                </li>
+            {%- endfor %}
+            <li data-reveal class="flex flex-col items-start justify-center rounded-xl border border-dashed p-6">
+                <h3 class="font-medium">Vous voulez nous rejoindre ?</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Nous recrutons un ou une développeuse Symfony.</p>
+                <twig:Button as="a" href="#" variant="outline" class="mt-4">Voir les offres</twig:Button>
+            </li>
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,50 @@
+{#- Liste de descriptions : paires libellé / valeur sur deux colonnes, avec pièces jointes. -#}
+{%- props
+    ## string Heading.
+    title = 'Fiche entreprise',
+    ## string Supporting text.
+    description = 'Les informations qui figurent sur vos factures et vos contrats.',
+    ## array<array{label: string, value: string}> Items.
+    items = [
+        {label: 'Raison sociale', value: 'Atelier Saône SAS'},
+        {label: 'Forme juridique', value: 'Société par actions simplifiée'},
+        {label: 'SIREN', value: '912 345 678'},
+        {label: 'TVA intracommunautaire', value: 'FR 12 912345678'},
+        {label: 'Adresse', value: '14 quai Saint-Antoine, 69002 Lyon'},
+        {label: 'Représentant légal', value: 'Clara Fontaine, présidente'},
+        {label: 'Activité', value: 'Conception et fabrication de mobilier sur mesure, en petite série, pour les particuliers et les hôtels.'},
+    ],
+    ## array<array{name: string, size: string, href: string}> Attached documents.
+    files = [
+        {name: 'kbis-atelier-saone.pdf', size: '182 Ko', href: '#'},
+        {name: 'attestation-urssaf-2026.pdf', size: '96 Ko', href: '#'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-4xl">
+        <h2 class="text-2xl font-semibold tracking-tight">{{ title }}</h2>
+        <p class="mt-2 text-muted-foreground">{{ description }}</p>
+        <dl class="mt-8 divide-y border-y">
+            {%- for i in items %}
+                <div class="grid gap-1 py-4 sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium">{{ i.label }}</dt>
+                    <dd class="text-sm text-muted-foreground sm:col-span-2">{{ i.value }}</dd>
+                </div>
+            {%- endfor %}
+            <div class="grid gap-1 py-4 sm:grid-cols-3 sm:gap-4">
+                <dt class="text-sm font-medium">Pièces jointes</dt>
+                <dd class="sm:col-span-2">
+                    <ul class="divide-y rounded-lg border">
+                        {%- for f in files %}
+                            <li class="flex items-center gap-3 px-4 py-3 text-sm">
+                                <twig:ux:icon name="lucide:file-code" class="size-4 text-muted-foreground" />
+                                <span class="truncate font-medium">{{ f.name }}</span><span class="text-muted-foreground">{{ f.size }}</span>
+                                <a href="{{ f.href }}" class="ms-auto font-medium text-primary">Télécharger</a>
+                            </li>
+                        {%- endfor %}
+                    </ul>
+                </dd>
+            </div>
+        </dl>
+    </div>
+</section>

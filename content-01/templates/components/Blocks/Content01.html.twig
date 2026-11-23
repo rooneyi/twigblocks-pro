@@ -1,0 +1,35 @@
+{%- props
+    ## string Heading.
+    title = 'Nous avons commencé par nos propres factures',
+    ## string|null Short pull quote displayed on the side.
+    quote = 'On ne voulait plus passer le premier dimanche du mois sur un tableur.',
+    ## string Author of the quote.
+    quoteAuthor = 'L’équipe fondatrice',
+    ## array<array{value: string, label: string}> Figures shown under the text.
+    figures = [{value: '2021', label: 'premières factures envoyées'}, {value: '4 000+', label: 'entreprises clientes'}, {value: '12', label: 'personnes à Lyon'}]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.4fr_1fr]">
+        <div>
+            <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <div class="mt-6 max-w-[65ch] space-y-4 text-lg leading-8 text-muted-foreground">
+                {%- block content -%}
+                    <p>Lumen est né dans une agence de quatre personnes qui perdait chaque mois une journée entière à relancer des clients et à pointer des virements.</p>
+                    <p>Nous avons construit l’outil dont nous avions besoin, puis nos voisins de bureau l’ont adopté. Aujourd’hui, il sert des graphistes, des cabinets et des agences partout en France, mais la règle n’a pas changé : chaque fonction doit faire gagner du temps dès la première semaine.</p>
+                {%- endblock -%}
+            </div>
+            <dl class="mt-10 grid grid-cols-3 gap-6 border-t pt-8">
+                {%- for figure in figures %}
+                    <div><dt class="text-sm text-muted-foreground">{{ figure.label }}</dt><dd class="order-first text-3xl font-semibold tracking-tight tabular-nums">{{ figure.value }}</dd></div>
+                {%- endfor %}
+            </dl>
+        </div>
+        {%- if quote %}
+            <figure class="self-start rounded-xl border bg-muted/40 p-8 lg:mt-16">
+                <twig:ux:icon name="lucide:quote" class="size-6 text-muted-foreground" />
+                <blockquote class="mt-4 text-xl font-medium text-balance">{{ quote }}</blockquote>
+                <figcaption class="mt-4 text-sm text-muted-foreground">{{ quoteAuthor }}</figcaption>
+            </figure>
+        {%- endif %}
+    </div>
+</section>

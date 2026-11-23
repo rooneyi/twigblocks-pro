@@ -1,0 +1,47 @@
+{#- Histogramme groupé en SVG pur, deux séries, avec légende et tableau accessible. -#}
+{%- props
+    ## string Card title.
+    title = 'Factures émises',
+    ## string Card description.
+    description = 'Cette année comparée à l’an dernier',
+    ## array{current: string, previous: string} Series names.
+    series = {current: '2026', previous: '2025'},
+    ## array<array{label: string, current: float, previous: float}> Data, in order.
+    data = [
+        {label: 'Jan', current: 42, previous: 31}, {label: 'Fév', current: 38, previous: 34}, {label: 'Mar', current: 51, previous: 40},
+        {label: 'Avr', current: 47, previous: 39}, {label: 'Mai', current: 56, previous: 44}, {label: 'Juin', current: 61, previous: 48},
+    ]
+-%}
+{%- set w = 600 -%}{%- set h = 180 -%}
+{%- set max = (data|map(d => max(d.current, d.previous))|reduce((a, b) => max(a, b), 0)) * 1.1 -%}
+{%- set group = w / data|length -%}{%- set bar = (group * 0.28)|round(1) -%}
+{%- set uid = 'bars-' ~ random(100000) -%}
+<twig:Card {{ ...attributes }}>
+    <twig:Card:Header>
+        <twig:Card:Title>{{ title }}</twig:Card:Title>
+        <twig:Card:Description>{{ description }}</twig:Card:Description>
+        <twig:Card:Action>
+            <ul class="flex gap-3 text-xs text-muted-foreground">
+                <li class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-primary"></span>{{ series.current }}</li>
+                <li class="flex items-center gap-1.5"><span class="size-2.5 rounded-sm bg-primary/30"></span>{{ series.previous }}</li>
+            </ul>
+        </twig:Card:Action>
+    </twig:Card:Header>
+    <twig:Card:Content>
+        <svg viewBox="0 0 {{ w }} {{ h + 24 }}" class="h-auto w-full text-primary" role="img" aria-labelledby="{{ uid }}-t">
+            <title id="{{ uid }}-t">{{ title }}</title>
+            {%- for d in data %}
+                {%- set x = loop.index0 * group + group / 2 -%}
+                {%- set hc = (d.current / max * h)|round(1) -%}{%- set hp = (d.previous / max * h)|round(1) -%}
+                <rect x="{{ (x - bar - 2)|round(1) }}" y="{{ h - hp }}" width="{{ bar }}" height="{{ hp }}" rx="4" fill="currentColor" fill-opacity="0.3"/>
+                <rect x="{{ (x + 2)|round(1) }}" y="{{ h - hc }}" width="{{ bar }}" height="{{ hc }}" rx="4" fill="currentColor"/>
+                <text x="{{ x|round(1) }}" y="{{ h + 20 }}" text-anchor="middle" class="fill-muted-foreground text-[11px]">{{ d.label }}</text>
+            {%- endfor %}
+        </svg>
+        <table class="sr-only">
+            <caption>{{ title }}</caption>
+            <thead><tr><th scope="col"></th><th scope="col">{{ series.current }}</th><th scope="col">{{ series.previous }}</th></tr></thead>
+            <tbody>{% for d in data %}<tr><th scope="row">{{ d.label }}</th><td>{{ d.current }}</td><td>{{ d.previous }}</td></tr>{% endfor %}</tbody>
+        </table>
+    </twig:Card:Content>
+</twig:Card>

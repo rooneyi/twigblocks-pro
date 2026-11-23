@@ -1,0 +1,33 @@
+{#- Contenu de démonstration : remplacez les citations par de vrais retours clients. -#}
+{%- props
+    ## string Heading.
+    title = 'Ils ont arrêté de courir après leurs paiements',
+    ## array<array{quote: string, name: string, role: string, avatar?: string}> Testimonials.
+    items = [
+        {quote: 'Je passais mon dimanche soir sur les relances. Maintenant je ne les vois même plus partir.', name: 'Lucien Ntwali', role: 'Fondateur'},
+        {quote: 'Le rapprochement bancaire nous fait gagner une demi-journée par mois.', name: 'Augustin Paisible', role: 'Directeur technique'},
+        {quote: 'Nos clients paient par lien dans la journée. Le délai moyen a fondu.', name: 'Jonathan Bolibenga', role: 'Designer produit'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-6xl">
+        <h2 class="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+            {%- for item in items %}
+                <figure class="flex flex-col justify-between gap-6 rounded-xl border p-6">
+                    <blockquote class="text-pretty">« {{ item.quote }} »</blockquote>
+                    <figcaption class="flex items-center gap-3">
+                        <twig:Avatar>
+                            {%- if item.avatar is defined %}<twig:Avatar:Image src="{{ item.avatar }}" alt="" />{% endif %}
+                            <twig:Avatar:Fallback>{{ item.name|split(' ')|map(w => w|first)|join|slice(0, 2)|upper }}</twig:Avatar:Fallback>
+                        </twig:Avatar>
+                        <div class="text-sm">
+                            <p class="font-medium">{{ item.name }}</p>
+                            <p class="text-muted-foreground">{{ item.role }}</p>
+                        </div>
+                    </figcaption>
+                </figure>
+            {%- endfor %}
+        </div>
+    </div>
+</section>

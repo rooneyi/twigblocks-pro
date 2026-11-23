@@ -1,0 +1,49 @@
+{%- props
+    ## string Main heading.
+    title = 'Vos factures partent seules. Vos paiements arrivent plus vite.',
+    ## string Supporting paragraph.
+    description = 'Relances automatiques, paiement par lien et rapprochement bancaire. En moyenne, nos clients sont payés 12 jours plus tôt.',
+    ## string Primary button label.
+    primaryLabel = 'Essayer gratuitement',
+    ## string Primary button target.
+    primaryHref = '#',
+    ## array<string> Short reassurance points under the buttons.
+    points = ['Sans carte bancaire', 'Import depuis Excel', 'Support en français']
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-16 sm:px-6 sm:py-24'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+        <div>
+            <h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{{ title }}</h1>
+            <p class="mt-5 max-w-lg text-lg text-pretty text-muted-foreground">{{ description }}</p>
+            <form class="mt-8 flex max-w-md flex-col gap-2 sm:flex-row" action="{{ primaryHref }}">
+                <twig:Input type="email" name="email" placeholder="vous@entreprise.fr" aria-label="Adresse e-mail" class="h-10" required />
+                <twig:Button type="submit" size="lg" class="h-10 px-4">{{ primaryLabel }}</twig:Button>
+            </form>
+            <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                {%- for point in points %}
+                    <li class="flex items-center gap-1.5"><twig:ux:icon name="lucide:check" class="size-4 text-emerald-600" />{{ point }}</li>
+                {%- endfor %}
+            </ul>
+        </div>
+        {%- block visual -%}
+            <twig:Card class="shadow-xl" aria-hidden="true">
+                <twig:Card:Header>
+                    <twig:Card:Title>Facture F-2026-0142</twig:Card:Title>
+                    <twig:Card:Description>Atelier Moreau · échéance le 30 novembre</twig:Card:Description>
+                    <twig:Card:Action><twig:Badge variant="secondary">Envoyée</twig:Badge></twig:Card:Action>
+                </twig:Card:Header>
+                <twig:Card:Content class="space-y-3">
+                    {%- for line in [['Refonte du site vitrine', '2 400,00 €'], ['Maintenance (3 mois)', '450,00 €'], ['Hébergement annuel', '180,00 €']] %}
+                        <div class="flex justify-between text-sm"><span class="text-muted-foreground">{{ line[0] }}</span><span class="tabular-nums">{{ line[1] }}</span></div>
+                    {%- endfor %}
+                    <twig:Separator />
+                    <div class="flex justify-between font-medium"><span>Total TTC</span><span class="tabular-nums">3 636,00 €</span></div>
+                </twig:Card:Content>
+                <twig:Card:Footer class="justify-between border-t bg-muted/50 py-3">
+                    <span class="text-xs text-muted-foreground">Relance automatique dans 3 jours</span>
+                    <twig:Button size="sm" tabindex="-1">Payer par carte</twig:Button>
+                </twig:Card:Footer>
+            </twig:Card>
+        {%- endblock -%}
+    </div>
+</section>

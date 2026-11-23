@@ -1,0 +1,29 @@
+{%- props
+    ## string Form action URL.
+    action = '#',
+    ## string Masked destination of the code.
+    destination = 'c•••••@exemple.fr',
+    ## int Number of digits.
+    length = 6,
+    ## string URL to request a new code.
+    resendHref = '#'
+-%}
+<section {{ attributes.defaults({class: 'grid min-h-[30rem] place-items-center p-6'|tailwind_classes}) }}>
+    <form method="post" action="{{ action }}" class="w-full max-w-sm text-center">
+        <span class="mx-auto grid size-12 place-items-center rounded-full bg-muted"><twig:ux:icon name="lucide:shield-check" class="size-5" /></span>
+        <h1 class="mt-4 text-2xl font-semibold tracking-tight">Vérifiez votre identité</h1>
+        <p class="mt-2 text-sm text-muted-foreground">Saisissez le code à {{ length }} chiffres envoyé à <span class="font-medium text-foreground">{{ destination }}</span>.</p>
+        <twig:InputOtp inputs="{{ length }}" name="code" class="mt-8 justify-center">
+            {%- set half = (length / 2)|round(0, 'ceil') %}
+            <twig:InputOtp:Group>
+                {%- for i in 1..half %}<twig:InputOtp:Slot input="{{ i }}" />{% endfor %}
+            </twig:InputOtp:Group>
+            <twig:InputOtp:Separator />
+            <twig:InputOtp:Group>
+                {%- for i in (half + 1)..length %}<twig:InputOtp:Slot input="{{ i }}" />{% endfor %}
+            </twig:InputOtp:Group>
+        </twig:InputOtp>
+        <twig:Button type="submit" size="lg" class="mt-8 w-full">Vérifier</twig:Button>
+        <p class="mt-6 text-sm text-muted-foreground">Rien reçu ? Vérifiez vos courriers indésirables ou <a href="{{ resendHref }}" class="text-foreground underline underline-offset-4">renvoyez un code</a>.</p>
+    </form>
+</section>

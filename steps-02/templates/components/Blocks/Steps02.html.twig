@@ -1,0 +1,40 @@
+{#- Étapes en frise verticale, chacune avec une capture d'écran en regard. Contrôleur : reveal. -#}
+{%- props
+    ## string Heading.
+    title = 'Votre premier mois avec Facturo',
+    ## string Supporting text.
+    description = 'Nous vous accompagnons à chaque étape ; la plupart des équipes sont autonomes dès la deuxième semaine.',
+    ## array<array{when: string, title: string, text: string, image?: string}> Steps.
+    steps = [
+        {when: 'Jour 1', title: 'Connexion de vos comptes', text: 'Banques, logiciel de caisse, ancien outil de facturation : l’historique est importé en lecture seule.'},
+        {when: 'Semaine 1', title: 'Vos catégories, vos règles', text: 'Facturo propose un classement ; vous validez les cas douteux en un clic.'},
+        {when: 'Semaine 2', title: 'Premières relances automatiques', text: 'Un ton, un rythme, des exceptions : les relances partent sans vous.'},
+        {when: 'Jour 30', title: 'Votre prévision à 90 jours', text: 'Assez d’historique pour une prévision fiable, et des scénarios pour décider.'},
+    ],
+    ## array<string> Screenshots used, in order, by steps without an image.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }} data-controller="reveal">
+    <div class="mx-auto max-w-5xl">
+        <div class="max-w-2xl">
+            <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+        </div>
+        <ol class="relative mt-16 space-y-16 before:absolute before:top-2 before:bottom-2 before:left-3 before:w-px before:bg-border md:before:left-1/2">
+            {%- for s in steps %}
+                {%- set img = s.image ?? images[loop.index0] ?? null %}
+                <li class="relative grid gap-6 ps-10 md:grid-cols-2 md:gap-16 md:ps-0" data-reveal>
+                    <span class="absolute top-1.5 left-1.5 size-3 rounded-full border-2 border-primary bg-background md:left-1/2 md:-translate-x-1/2" aria-hidden="true"></span>
+                    <div class="{{ loop.index is even ? 'md:order-2' : 'md:text-end' }}">
+                        <p class="font-mono text-xs text-primary">{{ s.when }}</p>
+                        <h3 class="mt-2 text-xl font-semibold">{{ s.title }}</h3>
+                        <p class="mt-2 text-muted-foreground">{{ s.text }}</p>
+                    </div>
+                    <div class="overflow-hidden rounded-xl border bg-muted/50 p-1.5 shadow-xs {{ loop.index is even ? 'md:order-1' : '' }}">
+                        {%- if img %}<img src="{{ img }}" alt="" loading="lazy" class="aspect-[4/3] w-full rounded-lg object-cover object-top">{% else %}<div class="aspect-[4/3] rounded-lg bg-muted"></div>{% endif %}
+                    </div>
+                </li>
+            {%- endfor %}
+        </ol>
+    </div>
+</section>

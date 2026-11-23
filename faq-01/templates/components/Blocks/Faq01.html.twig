@@ -1,0 +1,31 @@
+{%- props
+    ## string Heading.
+    title = 'Questions fréquentes',
+    ## string Supporting text, can contain a contact link.
+    description = 'Une autre question ? Écrivez-nous, on répond en moins d’un jour ouvré.',
+    ## array<array{question: string, answer: string}> Questions and answers.
+    items = [
+        {question: 'Puis-je importer mes clients existants ?', answer: 'Oui, depuis un fichier Excel ou CSV. Les colonnes sont détectées automatiquement et vous validez avant l’import.'},
+        {question: 'Les factures sont-elles conformes ?', answer: 'Elles contiennent toutes les mentions obligatoires et sont prêtes pour la facturation électronique.'},
+        {question: 'Que se passe-t-il si j’arrête mon abonnement ?', answer: 'Vous gardez l’accès en lecture à toutes vos factures et pouvez les exporter à tout moment.'},
+        {question: 'Mes données sont-elles hébergées en France ?', answer: 'Oui, chez un hébergeur français, avec une sauvegarde chiffrée chaque nuit.'},
+    ],
+    ## string Unique id of the accordion.
+    id = 'faq'
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_1.6fr]">
+        <div>
+            <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-muted-foreground">{{ description }}</p>
+        </div>
+        <twig:Accordion id="{{ id }}" defaultValue="item-0">
+            {%- for item in items %}
+                <twig:Accordion:Item value="item-{{ loop.index0 }}">
+                    <twig:Accordion:Trigger class="text-base">{{ item.question }}</twig:Accordion:Trigger>
+                    <twig:Accordion:Content class="text-muted-foreground">{{ item.answer }}</twig:Accordion:Content>
+                </twig:Accordion:Item>
+            {%- endfor %}
+        </twig:Accordion>
+    </div>
+</section>

@@ -1,0 +1,46 @@
+{%- props
+    ## string Form action URL (multipart).
+    action = '#',
+    ## string Accepted types, passed to the input "accept" attribute.
+    accept = '.pdf,.png,.jpg,.csv',
+    ## string Help text under the drop zone.
+    hint = 'PDF, PNG, JPG ou CSV, 10 Mo maximum par fichier',
+    ## array<array{name: string, size: string, progress: int, error?: string}> Files already added.
+    files = [
+        {name: 'releve-octobre-2026.pdf', size: '284 Ko', progress: 100},
+        {name: 'clients-export.csv', size: '1,2 Mo', progress: 64},
+        {name: 'logo-haute-definition.png', size: '14,8 Mo', progress: 0, error: 'Fichier trop lourd (10 Mo maximum).'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'p-4 sm:p-6'|tailwind_classes}) }}>
+    <form method="post" action="{{ action }}" enctype="multipart/form-data" class="mx-auto max-w-xl">
+        <label for="upload-files" class="flex cursor-pointer flex-col items-center rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors hover:border-primary/50 hover:bg-muted/40 has-focus-visible:border-ring has-focus-visible:ring-3 has-focus-visible:ring-ring/50">
+            <span class="grid size-11 place-items-center rounded-full bg-muted"><twig:ux:icon name="lucide:upload" class="size-5" /></span>
+            <span class="mt-3 text-sm font-medium">Glissez vos fichiers ici ou <span class="text-primary underline underline-offset-4">parcourez</span></span>
+            <span class="mt-1 text-xs text-muted-foreground">{{ hint }}</span>
+            <input id="upload-files" type="file" name="files[]" multiple accept="{{ accept }}" class="sr-only">
+        </label>
+        <ul class="mt-4 space-y-2" aria-label="Fichiers ajoutés">
+            {%- for f in files %}
+                <li class="flex items-center gap-3 rounded-lg border p-3 {{ f.error is defined ? 'border-destructive/40' : '' }}">
+                    <span class="grid size-9 shrink-0 place-items-center rounded-md bg-muted"><twig:ux:icon name="lucide:file-text" class="size-4" /></span>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex justify-between gap-2 text-sm"><span class="truncate font-medium">{{ f.name }}</span><span class="shrink-0 text-xs text-muted-foreground">{{ f.size }}</span></div>
+                        {%- if f.error is defined %}
+                            <p class="mt-1 text-xs text-destructive" role="alert">{{ f.error }}</p>
+                        {%- elseif f.progress < 100 %}
+                            <twig:Progress value="{{ f.progress }}" class="mt-2" aria-label="Envoi de {{ f.name }}" />
+                        {%- else %}
+                            <p class="mt-1 flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-400"><twig:ux:icon name="lucide:check" class="size-3.5" />Envoyé</p>
+                        {%- endif %}
+                    </div>
+                    <twig:Button variant="ghost" size="icon-sm" aria-label="Retirer {{ f.name }}"><twig:ux:icon name="lucide:x" /></twig:Button>
+                </li>
+            {%- endfor %}
+        </ul>
+        <div class="mt-4 flex justify-end gap-2">
+            <twig:Button variant="ghost" type="reset">Annuler</twig:Button>
+            <twig:Button type="submit">Importer</twig:Button>
+        </div>
+    </form>
+</section>

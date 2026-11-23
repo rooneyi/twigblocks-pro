@@ -1,0 +1,58 @@
+{#- Tableau de bord complet : barre latérale, en-tête, indicateurs, graphiques et tableau. Barre latérale repliable sur mobile avec <details>, sans JavaScript. -#}
+{%- props
+    ## string Product name.
+    brand = 'Lumen',
+    ## array<array{label: string, icon: string, href: string, active?: bool}> Main navigation.
+    nav = [
+        {label: 'Tableau de bord', icon: 'lucide:layout-dashboard', href: '#', active: true},
+        {label: 'Factures', icon: 'lucide:file-text', href: '#'},
+        {label: 'Devis', icon: 'lucide:file-pen-line', href: '#'},
+        {label: 'Clients', icon: 'lucide:users', href: '#'},
+        {label: 'Banque', icon: 'lucide:landmark', href: '#'},
+        {label: 'Rapports', icon: 'lucide:chart-column', href: '#'},
+    ],
+    ## array{name: string, email: string} Signed-in user.
+    user = {name: 'Camille Durand', email: 'camille@exemple.fr'}
+-%}
+{%- set navList -%}
+    <ul class="space-y-0.5">
+        {%- for item in nav %}
+            <li><a href="{{ item.href }}" class="flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm {{ (item.active ?? false) ? 'bg-muted font-medium text-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground' }}" {% if item.active ?? false %}aria-current="page"{% endif %}><twig:ux:icon name="{{ item.icon }}" class="size-4" />{{ item.label }}</a></li>
+        {%- endfor %}
+    </ul>
+{%- endset -%}
+<div {{ attributes.defaults({class: 'flex min-h-[56rem] bg-muted/40 text-foreground'|tailwind_classes}) }}>
+    <aside class="hidden w-60 shrink-0 flex-col border-e bg-background p-3 lg:flex">
+        <a href="#" class="mb-4 flex items-center gap-2 px-2 py-1 font-semibold"><span class="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground"><twig:ux:icon name="lucide:sparkles" class="size-4" /></span>{{ brand }}</a>
+        <nav aria-label="Navigation principale">{{ navList }}</nav>
+        <div class="mt-auto flex items-center gap-2 rounded-lg border p-2">
+            <twig:Avatar class="size-8"><twig:Avatar:Fallback>{{ user.name|split(' ')|map(w => w|first)|join|slice(0, 2)|upper }}</twig:Avatar:Fallback></twig:Avatar>
+            <div class="min-w-0 text-xs"><p class="truncate font-medium">{{ user.name }}</p><p class="truncate text-muted-foreground">{{ user.email }}</p></div>
+        </div>
+    </aside>
+    <div class="flex min-w-0 flex-1 flex-col">
+        <header class="flex h-14 items-center gap-3 border-b bg-background px-4">
+            <details class="relative lg:hidden">
+                <summary class="grid size-8 cursor-pointer list-none place-items-center rounded-md hover:bg-muted [&::-webkit-details-marker]:hidden" aria-label="Menu"><twig:ux:icon name="lucide:panel-left" class="size-4" /></summary>
+                <nav class="absolute start-0 top-10 z-20 w-56 rounded-lg border bg-popover p-2 shadow-md" aria-label="Navigation principale">{{ navList }}</nav>
+            </details>
+            <h1 class="font-semibold">Tableau de bord</h1>
+            <div class="ms-auto flex items-center gap-2">
+                <label for="dash-q" class="sr-only">Rechercher</label>
+                <twig:Input id="dash-q" type="search" placeholder="Rechercher…" class="hidden h-8 w-56 sm:block" />
+                <twig:Button variant="ghost" size="icon" aria-label="Notifications"><twig:ux:icon name="lucide:bell" /></twig:Button>
+                <twig:Button size="sm"><twig:ux:icon name="lucide:plus" />Nouvelle facture</twig:Button>
+            </div>
+        </header>
+        <main class="space-y-4 p-4 sm:p-6">
+            <twig:Blocks:Stats01 class="p-0 sm:p-0" />
+            <div class="grid gap-4 xl:grid-cols-[1.6fr_1fr]">
+                <twig:Blocks:ChartArea01 />
+                <twig:Blocks:ChartBar01 />
+            </div>
+            <twig:Card class="py-0">
+                <twig:Blocks:Table01 title="Dernières factures" />
+            </twig:Card>
+        </main>
+    </div>
+</div>

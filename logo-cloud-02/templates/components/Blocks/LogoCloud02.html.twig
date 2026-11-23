@@ -1,0 +1,25 @@
+{#- Logos clients en défilement continu, pause au survol. Les logos par défaut sont des marques fictives. -#}
+{%- props
+    ## string Sentence above the logos.
+    title = 'Utilisé chaque jour par plus de 4 000 entreprises',
+    ## array<array{name: string, icon: string}> Logos.
+    logos = [
+        {name: 'Northwind', icon: 'lucide:wind'}, {name: 'Atelier Brume', icon: 'lucide:cloud'}, {name: 'Kestrel', icon: 'lucide:feather'},
+        {name: 'Orbitale', icon: 'lucide:orbit'}, {name: 'Pierre & Fils', icon: 'lucide:gem'}, {name: 'Vélo Nord', icon: 'lucide:bike'},
+        {name: 'Hélios', icon: 'lucide:sun'}, {name: 'Marée', icon: 'lucide:waves'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'py-14'|tailwind_classes}) }}>
+    <p class="px-4 text-center text-sm text-muted-foreground">{{ title }}</p>
+    <div class="tb-marquee-host tb-fade-x mt-8 overflow-hidden">
+        <ul class="tb-marquee" style="--tb-duration: 35s; --tb-gap: 3.5rem">
+            {%- for copy in [false, true] %}
+                {%- for logo in logos %}
+                    <li class="flex shrink-0 items-center gap-2 text-lg font-semibold tracking-tight text-muted-foreground/80" {% if copy %}aria-hidden="true"{% endif %}>
+                        <twig:ux:icon name="{{ logo.icon }}" class="size-5" />{{ logo.name }}
+                    </li>
+                {%- endfor %}
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,28 @@
+{#- Chiffres clés qui défilent jusqu'à leur valeur à l'apparition (contrôleur "counter"), sur grille à bordures fines. -#}
+{%- props
+    ## string Heading.
+    title = 'Des résultats qui se mesurent',
+    ## array<array{value: float, decimals?: int, prefix?: string, suffix?: string, label: string}> Figures. The rendered text is the final value.
+    stats = [
+        {value: 4000, suffix: '+', label: 'entreprises clientes'},
+        {value: 1.2, decimals: 1, suffix: ' M', label: 'factures envoyées par an'},
+        {value: 18, suffix: ' j', label: 'délai moyen de paiement'},
+        {value: 99.9, decimals: 1, suffix: ' %', label: 'disponibilité sur 12 mois'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'relative overflow-hidden px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <twig:Blocks:Pattern type="dots" size="18" fade="radial" class="text-foreground/15" />
+    <div class="relative mx-auto max-w-6xl">
+        <h2 class="text-center text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+        <dl class="mt-12 grid border-s border-t bg-background/70 backdrop-blur sm:grid-cols-2 lg:grid-cols-4">
+            {%- for s in stats %}
+                {%- set decimals = s.decimals ?? 0 %}
+                <div class="flex flex-col border-e border-b p-8">
+                    <dt class="text-sm text-muted-foreground">{{ s.label }}</dt>
+                    <dd class="order-first text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl"
+                        data-controller="counter" data-counter-to-value="{{ s.value }}" data-counter-decimals-value="{{ decimals }}" data-counter-prefix-value="{{ s.prefix ?? '' }}" data-counter-suffix-value="{{ s.suffix ?? '' }}">{{ s.prefix ?? '' }}{{ s.value|number_format(decimals, ',', ' ') }}{{ s.suffix ?? '' }}</dd>
+                </div>
+            {%- endfor %}
+        </dl>
+    </div>
+</section>

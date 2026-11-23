@@ -1,0 +1,39 @@
+{%- props
+    ## string Heading.
+    title = 'Bien démarrer avec Lumen',
+    ## array<array{title: string, text: string, href: string, done: bool}> Steps, in order.
+    steps = [
+        {title: 'Ajoutez votre logo et vos coordonnées', text: 'Ils apparaîtront sur chaque devis et facture.', href: '#', done: true},
+        {title: 'Importez vos clients', text: 'Depuis un fichier Excel ou CSV, en deux minutes.', href: '#', done: true},
+        {title: 'Connectez votre banque', text: 'Pour rapprocher automatiquement les paiements reçus.', href: '#', done: false},
+        {title: 'Envoyez votre première facture', text: 'Vous pouvez vous l’envoyer à vous-même pour tester.', href: '#', done: false},
+    ]
+-%}
+{%- set doneCount = steps|filter(s => s.done)|length %}
+{%- set next = steps|filter(s => not s.done)|first %}
+<section {{ attributes.defaults({class: 'p-4 sm:p-6'|tailwind_classes}) }}>
+    <twig:Card class="mx-auto max-w-2xl">
+        <twig:Card:Header>
+            <twig:Card:Title>{{ title }}</twig:Card:Title>
+            <twig:Card:Description>{{ doneCount }} étape{{ doneCount > 1 ? 's' : '' }} sur {{ steps|length }} terminée{{ doneCount > 1 ? 's' : '' }}</twig:Card:Description>
+        </twig:Card:Header>
+        <twig:Card:Content>
+            <twig:Progress value="{{ (doneCount / steps|length * 100)|round }}" class="h-2" aria-label="Progression" />
+            <ol class="mt-6 space-y-1">
+                {%- for step in steps %}
+                    {%- set isNext = next and step.title == next.title %}
+                    <li class="flex gap-4 rounded-lg p-3 {{ isNext ? 'bg-muted' : '' }}">
+                        <span class="grid size-6 shrink-0 place-items-center rounded-full text-xs font-medium {{ step.done ? 'bg-primary text-primary-foreground' : 'border' }}" aria-hidden="true">
+                            {%- if step.done %}<twig:ux:icon name="lucide:check" class="size-3.5" />{% else %}{{ loop.index }}{% endif -%}
+                        </span>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium {{ step.done ? 'text-muted-foreground line-through' : '' }}">{{ step.title }}<span class="sr-only">{{ step.done ? ' (terminée)' : '' }}</span></p>
+                            {%- if not step.done %}<p class="mt-0.5 text-sm text-muted-foreground">{{ step.text }}</p>{% endif %}
+                        </div>
+                        {%- if isNext %}<twig:Button as="a" href="{{ step.href }}" size="sm" class="self-center">Commencer</twig:Button>{% endif %}
+                    </li>
+                {%- endfor %}
+            </ol>
+        </twig:Card:Content>
+    </twig:Card>
+</section>

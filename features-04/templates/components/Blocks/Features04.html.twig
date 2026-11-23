@@ -1,0 +1,42 @@
+{#- Fonctionnalités dépliables : chaque élément ouvert affiche sa capture à droite. Contrôleur : switcher. Sans JavaScript, l'accordéon fonctionne et la première image reste visible. -#}
+{%- props
+    ## string Heading.
+    title = 'Tout ce qu’il faut, rien de plus',
+    ## string Supporting text.
+    description = 'Quatre écrans couvrent 90 % de l’usage quotidien. Le reste se trouve en deux clics.',
+    ## array<array{title: string, text: string, image?: string}> Items.
+    items = [
+        {title: 'Un tableau de bord qui répond à « on est bien ? »', text: 'Solde consolidé, prévision de fin de mois et alertes. Rien d’autre en première page.'},
+        {title: 'Vos banques connectées en lecture seule', text: 'Synchronisation toutes les heures, sans jamais pouvoir effectuer de paiement.'},
+        {title: 'Un classement qui apprend de vos choix', text: 'Validez une fois, Facturo applique la règle aux mouvements suivants.'},
+        {title: 'Des scénarios avant chaque décision', text: 'Comparez trois avenirs possibles sur 12 mois, en direct.'},
+    ],
+    ## array<string> Screenshots used, in order, by items without an image.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }} data-controller="switcher">
+    <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.3fr]">
+        <div>
+            <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+            <div class="mt-10 border-t">
+                {%- for it in items %}
+                    <details class="group border-b py-1" data-switcher-target="item" data-action="toggle->switcher#toggle" {{ loop.first ? 'open' : '' }}>
+                        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-medium">
+                            {{ it.title }}<twig:ux:icon name="lucide:chevron-down" class="size-4 shrink-0 text-muted-foreground transition group-open:rotate-180" />
+                        </summary>
+                        <p class="pb-4 text-sm text-muted-foreground">{{ it.text }}</p>
+                    </details>
+                {%- endfor %}
+            </div>
+        </div>
+        <div class="relative grid overflow-hidden rounded-2xl border bg-muted/50 p-2 shadow-xs">
+            {%- for it in items %}
+                {%- set img = it.image ?? images[loop.index0] ?? null %}
+                <div class="tb-switch-panel col-start-1 row-start-1 {{ loop.first ? 'is-active' : '' }}" data-switcher-target="panel">
+                    {%- if img %}<img src="{{ img }}" alt="" loading="lazy" class="aspect-[4/3] w-full rounded-xl object-cover object-top">{% else %}<div class="aspect-[4/3] rounded-xl bg-muted"></div>{% endif %}
+                </div>
+            {%- endfor %}
+        </div>
+    </div>
+</section>

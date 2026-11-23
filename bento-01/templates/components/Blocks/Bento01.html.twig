@@ -1,0 +1,62 @@
+{%- props
+    ## string Heading.
+    title = 'Un seul outil, du devis au virement',
+    ## string Supporting text.
+    description = 'Chaque case est une partie du produit, montrée telle qu’elle fonctionne.'
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl">
+            <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+        </div>
+        <div class="mt-12 grid auto-rows-[minmax(14rem,auto)] gap-4 md:grid-cols-6">
+            {%- block cells -%}
+            <div class="flex flex-col rounded-xl border bg-card p-6 md:col-span-4">
+                <h3 class="font-medium">Relances qui partent seules</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Trois rappels, au bon moment, avec le bon ton.</p>
+                <ol class="mt-6 grid gap-2 text-sm sm:grid-cols-3">
+                    {%- for step in [['J+1', 'Rappel courtois', 'Envoyé'], ['J+7', 'Relance avec lien de paiement', 'Envoyé'], ['J+15', 'Dernier rappel', 'Programmé']] %}
+                        <li class="rounded-lg border bg-background p-3">
+                            <span class="text-xs text-muted-foreground">{{ step[0] }}</span>
+                            <p class="mt-1 font-medium">{{ step[1] }}</p>
+                            <twig:Badge variant="{{ step[2] == 'Envoyé' ? 'secondary' : 'outline' }}" class="mt-3">{{ step[2] }}</twig:Badge>
+                        </li>
+                    {%- endfor %}
+                </ol>
+            </div>
+            <div class="flex flex-col justify-between rounded-xl border bg-primary p-6 text-primary-foreground md:col-span-2">
+                <twig:ux:icon name="lucide:timer" class="size-6 opacity-70" />
+                <div>
+                    <p class="text-5xl font-semibold tracking-tight tabular-nums">−12 j</p>
+                    <p class="mt-2 text-sm text-primary-foreground/70">de délai de paiement moyen après trois mois d’utilisation</p>
+                </div>
+            </div>
+            <div class="flex flex-col rounded-xl border bg-card p-6 md:col-span-2">
+                <h3 class="font-medium">Rapprochement bancaire</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Chaque virement retrouve sa facture.</p>
+                <div class="mt-auto space-y-2 pt-6 text-sm">
+                    <div class="flex items-center justify-between rounded-md bg-muted px-3 py-2"><span>VIR ATELIER MOREAU</span><span class="tabular-nums">3 636,00 €</span></div>
+                    <div class="flex items-center gap-2 px-3 text-emerald-700 dark:text-emerald-400"><twig:ux:icon name="lucide:link" class="size-4" />F-2026-0142 · payée</div>
+                </div>
+            </div>
+            <div class="flex flex-col rounded-xl border bg-card p-6 md:col-span-2">
+                <h3 class="font-medium">Paiement par lien</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Carte ou virement instantané, sans compte à créer.</p>
+                <div class="mt-auto flex gap-2 pt-6">
+                    <twig:Button size="sm" tabindex="-1"><twig:ux:icon name="lucide:credit-card" />Carte</twig:Button>
+                    <twig:Button size="sm" variant="outline" tabindex="-1"><twig:ux:icon name="lucide:zap" />Virement instantané</twig:Button>
+                </div>
+            </div>
+            <div class="flex flex-col rounded-xl border bg-card p-6 md:col-span-2">
+                <h3 class="font-medium">Prêt pour votre comptable</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Export FEC et accès en lecture seule.</p>
+                <div class="mt-auto flex items-center gap-3 pt-6">
+                    <span class="grid size-10 place-items-center rounded-lg border bg-background"><twig:ux:icon name="lucide:file-spreadsheet" class="size-5" /></span>
+                    <span class="text-sm"><span class="font-medium">export-2026-T3.fec</span><br><span class="text-muted-foreground">généré le 1er octobre</span></span>
+                </div>
+            </div>
+            {%- endblock -%}
+        </div>
+    </div>
+</section>

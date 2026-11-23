@@ -1,0 +1,57 @@
+{#- Témoignages en pile de cartes qu'on fait défiler avec des flèches, puis deux chiffres clés dans un cadre fin. Contrôleur : stack. -#}
+{%- props
+    ## string Heading.
+    title = 'Ce que nos clients disent de Facturo',
+    ## string Supporting text.
+    description = 'Des cabinets, des agences et des artisans qui ont arrêté de courir après leurs paiements.',
+    ## array<array{quote: string, name: string, role: string, company: string, photo?: string}> Testimonials. Demo content: replace with real, verifiable quotes.
+    items = [
+        {quote: 'Avant, je passais mes vendredis à relancer. Maintenant les relances partent seules et nos délais de paiement ont baissé de trois semaines.', name: 'Lucien Ntwali', role: 'Fondateur', company: 'Atelier Saône'},
+        {quote: 'L’export comptable nous fait gagner une demi-journée par mois. Notre expert-comptable a même demandé le nom de l’outil.', name: 'Augustin Paisible', role: 'Directeur technique', company: 'Kivu Logistique'},
+        {quote: 'La prévision à 90 jours nous a évité un découvert en août. C’est devenu le premier écran que j’ouvre le lundi.', name: 'Jonathan Bolibenga', role: 'Designer produit', company: 'Studio Nord'},
+        {quote: 'Nos clients paient par lien depuis leur téléphone. Le taux de paiement à l’échéance est passé de 40 % à 78 %.', name: 'Simplice Bondo', role: 'Développeur Symfony', company: 'Bondo & Fils'},
+        {quote: 'Le support répond en français, vite, et connaît le métier. On a migré quatre sociétés en une semaine.', name: 'Philemon Kambale', role: 'Responsable commercial', company: 'Groupe Kambale'},
+    ],
+    ## array<array{value: string, label: string}> Key figures shown under the cards.
+    stats = [{value: '−21 jours', label: 'de délai de paiement moyen'}, {value: '+38 %', label: 'de factures payées à l’échéance'}],
+    ## string Link label under the block.
+    linkLabel = 'Lire les études de cas',
+    ## string Link URL.
+    linkHref = '#',
+    ## array<string> Photos used, in order, by testimonials without a photo.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-3xl text-center">
+        <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+        <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+    </div>
+    <div class="mx-auto mt-14 grid max-w-3xl grid-cols-[auto_1fr_auto] items-center gap-4" data-controller="stack">
+        <twig:Button variant="outline" size="icon" class="rounded-full" data-action="stack#prev" aria-label="Témoignage précédent"><twig:ux:icon name="lucide:chevron-up" /></twig:Button>
+        <div class="tb-stack grid pb-8" aria-roledescription="carrousel" aria-label="Témoignages">
+            {%- for t in items %}
+                {%- set photo = t.photo ?? images[loop.index0] ?? null %}
+                <figure class="col-start-1 row-start-1 rounded-2xl border bg-card p-7 shadow-lg shadow-black/5 sm:p-9" data-stack-target="card" aria-roledescription="diapositive" aria-label="{{ loop.index }} sur {{ items|length }}">
+                    <p class="text-sm font-semibold tracking-tight text-primary">{{ t.company }}</p>
+                    <blockquote class="mt-5 text-lg leading-relaxed text-pretty sm:text-xl">« {{ t.quote }} »</blockquote>
+                    <figcaption class="mt-8 flex items-center gap-3">
+                        {%- if photo %}<img src="{{ photo }}" alt="" class="size-11 rounded-lg object-cover" loading="lazy">{% else %}<span class="grid size-11 place-items-center rounded-lg bg-foreground text-sm font-semibold text-background">{{ t.name|split(' ')|map(w => w|first)|join|slice(0, 2) }}</span>{% endif %}
+                        <span class="text-left"><span class="block font-medium">{{ t.name }}</span><span class="text-sm text-muted-foreground">{{ t.role }}</span></span>
+                    </figcaption>
+                </figure>
+            {%- endfor %}
+        </div>
+        <twig:Button variant="outline" size="icon" class="rounded-full" data-action="stack#next" aria-label="Témoignage suivant"><twig:ux:icon name="lucide:chevron-down" /></twig:Button>
+        <p class="sr-only" aria-live="polite" data-stack-target="status"></p>
+    </div>
+    <div class="relative mx-auto mt-10 grid max-w-xl grid-cols-2 border-y">
+        {%- for s in stats %}
+            <div class="px-6 py-6 text-center {{ loop.first ? 'border-e' : '' }}">
+                <p class="text-2xl font-semibold tabular-nums">{{ s.value }}</p>
+                <p class="mt-1 text-sm text-muted-foreground">{{ s.label }}</p>
+            </div>
+        {%- endfor %}
+        {%- for pos in ['-top-1.5 -left-1.5', '-top-1.5 -right-1.5', '-bottom-1.5 -left-1.5', '-bottom-1.5 -right-1.5'] %}<svg viewBox="0 0 12 12" class="pointer-events-none absolute {{ pos }} size-3 text-muted-foreground/60" aria-hidden="true"><path d="M6 0v12M0 6h12" stroke="currentColor"/></svg>{% endfor %}
+    </div>
+    <p class="mt-8 text-center"><a href="{{ linkHref }}" class="inline-flex items-center gap-1 text-sm font-medium text-primary">{{ linkLabel }}<twig:ux:icon name="lucide:chevron-right" class="size-4" /></a></p>
+</section>

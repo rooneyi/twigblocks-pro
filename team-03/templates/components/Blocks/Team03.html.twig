@@ -1,0 +1,29 @@
+{#- Équipe en liste, avec rôle et ville ; la ligne survolée se met en avant. Contenu de démonstration. -#}
+{%- props
+    ## string Heading.
+    title = 'Les personnes derrière Lumen',
+    ## array<array{name: string, role: string, city: string, href?: string}> Members.
+    members = [
+        {name: 'Lucien Ntwali', role: 'Fondateur', city: 'Lyon'},
+        {name: 'Augustin Paisible', role: 'Directeur technique', city: 'Lyon'},
+        {name: 'Jonathan Bolibenga', role: 'Designer produit', city: 'Paris'},
+        {name: 'Simplice Bondo', role: 'Développeur Symfony', city: 'Bruxelles'},
+        {name: 'Philemon Kambale', role: 'Responsable commercial', city: 'Lyon'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_2fr]">
+        <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+        <ul class="border-t">
+            {%- for m in members %}
+                <li>
+                    <a href="{{ m.href ?? '#' }}" class="group grid grid-cols-[auto_1fr_auto] items-center gap-4 border-b py-4 transition-colors hover:bg-muted/40 sm:px-3">
+                        <twig:Avatar class="size-10 transition-transform duration-300 group-hover:scale-110 motion-reduce:group-hover:scale-100"><twig:Avatar:Fallback>{{ m.name|split(' ')|map(w => w|first)|join|slice(0, 2)|upper }}</twig:Avatar:Fallback></twig:Avatar>
+                        <span><span class="block font-medium">{{ m.name }}</span><span class="text-sm text-muted-foreground">{{ m.role }}</span></span>
+                        <span class="flex items-center gap-2 text-sm text-muted-foreground">{{ m.city }}<twig:ux:icon name="lucide:arrow-up-right" class="size-4 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 rtl:-scale-x-100" /></span>
+                    </a>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

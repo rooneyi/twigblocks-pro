@@ -1,0 +1,44 @@
+{#-
+    Mur de témoignages en défilement continu sur deux lignes (sens opposés), pause au survol ou au clavier.
+    Le contenu est dupliqué pour une boucle sans à-coup ; la copie est masquée aux lecteurs d'écran.
+    Contenu de démonstration : remplacez les citations par de vrais retours clients.
+-#}
+{%- props
+    ## string Heading.
+    title = 'Ils facturent avec Lumen',
+    ## array<array{quote: string, name: string, role: string}> Testimonials.
+    items = [
+        {quote: 'Les relances partent seules. Je ne passe plus mes dimanches à écrire des e-mails gênés.', name: 'Lucien Ntwali', role: 'Fondateur'},
+        {quote: 'Le rapprochement bancaire nous fait gagner une demi-journée chaque mois.', name: 'Augustin Paisible', role: 'Directeur technique'},
+        {quote: 'Nos clients paient par lien dans la journée. Simple et propre.', name: 'Jonathan Bolibenga', role: 'Designer produit'},
+        {quote: 'L’export FEC a réglé la moitié des échanges avec notre comptable.', name: 'Simplice Bondo', role: 'Développeur Symfony'},
+        {quote: 'On voit enfin ce qui va rentrer le mois prochain, sans tableur.', name: 'Philemon Kambale', role: 'Responsable commercial'},
+    ]
+-%}
+{#- Chaque ligne contient tous les témoignages (la seconde décalée), répétés si besoin pour couvrir les grands écrans. -#}
+{%- set shift = (items|length / 2)|round(0, 'floor') -%}
+{%- set row1 = items -%}
+{%- set row2 = items|slice(shift)|merge(items|slice(0, shift)) -%}
+{%- set rows = items|length < 6 ? [row1|merge(row1), row2|merge(row2)] : [row1, row2] -%}
+<section {{ attributes.defaults({class: 'overflow-hidden py-20'|tailwind_classes}) }} aria-labelledby="tm3-title">
+    <h2 id="tm3-title" class="px-4 text-center text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+    <div class="tb-fade-x mt-12 space-y-4">
+        {%- for row in rows %}
+            <div class="tb-marquee-host overflow-hidden">
+                <ul class="tb-marquee {{ loop.index == 2 ? 'tb-marquee-reverse' : '' }}" style="--tb-duration: {{ 38 + loop.index * 8 }}s; --tb-gap: 1rem">
+                    {%- for copy in [false, true] %}
+                        {%- for t in row %}
+                            <li class="w-80 shrink-0 rounded-xl border bg-card p-5" {% if copy %}aria-hidden="true"{% endif %}>
+                                <p class="text-sm leading-6">« {{ t.quote }} »</p>
+                                <div class="mt-4 flex items-center gap-3">
+                                    <twig:Avatar class="size-8"><twig:Avatar:Fallback class="text-xs">{{ t.name|split(' ')|map(w => w|first)|join|slice(0, 2)|upper }}</twig:Avatar:Fallback></twig:Avatar>
+                                    <div class="text-sm"><p class="font-medium">{{ t.name }}</p><p class="text-xs text-muted-foreground">{{ t.role }}</p></div>
+                                </div>
+                            </li>
+                        {%- endfor %}
+                    {%- endfor %}
+                </ul>
+            </div>
+        {%- endfor %}
+    </div>
+</section>

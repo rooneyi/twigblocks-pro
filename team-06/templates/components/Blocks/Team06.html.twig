@@ -1,0 +1,39 @@
+{#- « On construit ensemble » : texte, chiffres clés et photos d'équipe façon polaroïds inclinés. -#}
+{%- props
+    ## string Heading.
+    title = 'On construit ensemble',
+    ## string Supporting text.
+    description = 'Notre équipe avance grâce à la collaboration, la curiosité et l’exigence. Chaque semaine apporte de nouveaux défis, et de bonnes raisons de progresser.',
+    ## array<array{value: string, label: string}> Key figures.
+    stats = [{value: '24', label: 'personnes'}, {value: '3', label: 'pays'}, {value: '4', label: 'bureaux'}],
+    ## array<array{caption: string, photo?: string}> Photos with captions (4).
+    photos = [
+        {caption: 'Séminaire stratégie, Lyon 2026'},
+        {caption: 'Lancement de la v3, Bruxelles 2026'},
+        {caption: 'Atelier design, Kinshasa 2025'},
+        {caption: 'Retraite annuelle, Annecy 2025'},
+    ],
+    ## array<string> Photos used, in order, by items without a photo.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'overflow-hidden px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-5xl">
+        <div class="mx-auto max-w-xl">
+            <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+            <dl class="mt-8 grid grid-cols-3 gap-6">
+                {%- for s in stats %}<div><dt class="sr-only">{{ s.label }}</dt><dd class="text-3xl font-semibold tabular-nums">{{ s.value }}</dd><dd class="text-sm text-muted-foreground">{{ s.label }}</dd></div>{% endfor %}
+            </dl>
+        </div>
+        {%- set tilts = ['-rotate-6 translate-y-3', 'rotate-3', '-rotate-2 translate-y-2', 'rotate-6'] -%}
+        <ul class="mt-16 grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-3">
+            {%- for p in photos %}
+                {%- set photo = p.photo ?? images[loop.index0] ?? null %}
+                <li class="{{ tilts[loop.index0 % 4] }} rounded-sm bg-white p-2.5 pb-3 shadow-lg ring-1 ring-black/5 transition duration-500 hover:z-10 hover:scale-105 hover:rotate-0 motion-reduce:transition-none dark:bg-zinc-100">
+                    {%- if photo %}<img src="{{ photo }}" alt="" loading="lazy" class="aspect-square w-full object-cover grayscale">{% else %}<div class="aspect-square bg-zinc-200"></div>{% endif %}
+                    <p class="mt-2.5 text-center font-mono text-[11px] text-zinc-600">{{ p.caption }}</p>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

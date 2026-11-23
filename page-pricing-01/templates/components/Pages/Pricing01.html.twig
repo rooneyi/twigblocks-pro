@@ -1,0 +1,20 @@
+{#- Page tarifs complète : formules, réassurance, FAQ et appel à l'action. -#}
+{%- props
+    ## string Brand name passed to the navigation and footer.
+    brand = 'Lumen'
+-%}
+<div {{ attributes.defaults({class: 'bg-background text-foreground'|tailwind_classes}) }}>
+    <twig:Blocks:Navbar01 brand="{{ brand }}" class="sticky top-0 z-40" />
+    <main>
+        <twig:Blocks:Pricing01 class="pt-16 sm:pt-24" />
+        <twig:Blocks:LogoCloud01 />
+        <twig:Blocks:Faq01 id="pricing-faq" :items="[
+            {question: 'Puis-je changer de formule en cours de mois ?', answer: 'Oui. Le changement est immédiat et la différence est calculée au prorata sur votre prochaine facture.'},
+            {question: 'Quels moyens de paiement acceptez-vous ?', answer: 'Carte bancaire et prélèvement SEPA. Les formules annuelles peuvent aussi être réglées par virement.'},
+            {question: 'Proposez-vous une remise annuelle ?', answer: 'Deux mois offerts sur toutes les formules payées à l’année.'},
+            {question: 'Que se passe-t-il à la fin de l’essai ?', answer: 'Rien n’est prélevé sans votre accord. Choisissez une formule ou votre compte passe en lecture seule.'},
+        ]" />
+        <twig:Blocks:Cta01 title="Encore un doute ?" description="Testez toutes les fonctions pendant 14 jours." buttonLabel="Démarrer l’essai" />
+    </main>
+    <twig:Blocks:Footer01 brand="{{ brand }}" />
+</div>

@@ -1,0 +1,40 @@
+{#- Les noms par défaut sont génériques : ne mettez des logos de marques tierces qu'en respectant leurs règles d'usage. -#}
+{%- props
+    ## string Heading.
+    title = 'Se branche sur les outils que vous utilisez déjà',
+    ## string Supporting text.
+    description = 'Synchronisation dans les deux sens, configurée en quelques clics.',
+    ## array<array{icon: string, name: string, text: string}> Integrations.
+    items = [
+        {icon: 'lucide:landmark', name: 'Votre banque', text: 'Plus de 300 banques françaises et européennes.'},
+        {icon: 'lucide:calendar', name: 'Agenda', text: 'Les échéances apparaissent dans votre calendrier.'},
+        {icon: 'lucide:mail', name: 'Messagerie', text: 'Envoyez depuis votre propre adresse e-mail.'},
+        {icon: 'lucide:file-spreadsheet', name: 'Tableur', text: 'Export CSV et Excel en un clic.'},
+        {icon: 'lucide:calculator', name: 'Logiciel comptable', text: 'Écritures exportées au format FEC.'},
+        {icon: 'lucide:webhook', name: 'API et webhooks', text: 'Pour connecter le reste de votre système.'},
+    ],
+    ## string|null Link label below the grid.
+    linkLabel = 'Voir toutes les intégrations',
+    ## string Link target.
+    linkHref = '#'
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1fr_1.6fr]">
+        <div>
+            <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-muted-foreground">{{ description }}</p>
+            {%- if linkLabel %}<twig:Button as="a" href="{{ linkHref }}" variant="outline" class="mt-8">{{ linkLabel }}</twig:Button>{% endif %}
+        </div>
+        <ul class="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2">
+            {%- for item in items %}
+                <li class="flex gap-4 bg-background p-5">
+                    <span class="grid size-10 shrink-0 place-items-center rounded-lg bg-muted"><twig:ux:icon name="{{ item.icon }}" class="size-5" /></span>
+                    <div>
+                        <p class="font-medium">{{ item.name }}</p>
+                        <p class="mt-1 text-sm text-muted-foreground">{{ item.text }}</p>
+                    </div>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,74 @@
+{%- props
+    ## array<array{label: string, icon: string, count?: int, active?: bool}> Folders.
+    folders = [
+        {label: 'Boîte de réception', icon: 'lucide:inbox', count: 12, active: true},
+        {label: 'Envoyés', icon: 'lucide:send'},
+        {label: 'Brouillons', icon: 'lucide:file', count: 2},
+        {label: 'Archives', icon: 'lucide:archive'},
+        {label: 'Corbeille', icon: 'lucide:trash-2'},
+    ],
+    ## array<array{from: string, subject: string, excerpt: string, time: string, unread?: bool, label?: string}> Messages.
+    messages = [
+        {from: 'Atelier Moreau', subject: 'Re : Facture F-2026-0142', excerpt: 'Merci pour l’envoi, le virement part ce soir. Pouvez-vous…', time: '09:42', unread: true, label: 'Client'},
+        {from: 'Banque', subject: 'Virement reçu : 1 200,00 €', excerpt: 'Un virement de Studio Lune a été crédité sur votre compte.', time: '08:15', unread: true},
+        {from: 'Cabinet Roux', subject: 'Devis signé', excerpt: 'Bonjour, vous trouverez le devis signé en pièce jointe.', time: 'Hier', label: 'Devis'},
+        {from: 'Lumen', subject: 'Votre résumé de la semaine', excerpt: '4 factures payées, 2 en attente, délai moyen de 16 jours.', time: 'Lun.'},
+    ]
+-%}
+{%- set current = messages|first %}
+<section {{ attributes.defaults({class: 'grid h-[34rem] overflow-hidden border bg-background md:grid-cols-[13rem_20rem_1fr] md:rounded-xl'|tailwind_classes}) }}>
+    <nav class="hidden flex-col gap-1 border-e p-3 md:flex" aria-label="Dossiers">
+        <twig:Button class="mb-2 w-full"><twig:ux:icon name="lucide:pen-line" />Nouveau message</twig:Button>
+        {%- for f in folders %}
+            <a href="#" class="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm {{ (f.active ?? false) ? 'bg-muted font-medium' : 'text-muted-foreground hover:bg-muted' }}" {% if f.active ?? false %}aria-current="page"{% endif %}>
+                <twig:ux:icon name="{{ f.icon }}" class="size-4" />{{ f.label }}
+                {%- if f.count is defined %}<span class="ms-auto text-xs tabular-nums">{{ f.count }}</span>{% endif %}
+            </a>
+        {%- endfor %}
+    </nav>
+    <div class="flex min-h-0 flex-col border-e">
+        <div class="border-b p-3">
+            <label for="inbox-q" class="sr-only">Rechercher</label>
+            <twig:Input id="inbox-q" type="search" placeholder="Rechercher" class="h-8" />
+        </div>
+        <ul class="min-h-0 flex-1 overflow-y-auto">
+            {%- for m in messages %}
+                <li>
+                    <a href="#" class="block border-b px-4 py-3 hover:bg-muted/50 {{ loop.first ? 'bg-muted/60' : '' }}">
+                        <div class="flex items-center gap-2 text-sm">
+                            {%- if m.unread ?? false %}<span class="size-2 rounded-full bg-primary" aria-label="Non lu"></span>{% endif %}
+                            <span class="{{ (m.unread ?? false) ? 'font-semibold' : 'font-medium' }}">{{ m.from }}</span>
+                            <span class="ms-auto text-xs text-muted-foreground">{{ m.time }}</span>
+                        </div>
+                        <p class="mt-0.5 truncate text-sm">{{ m.subject }}</p>
+                        <p class="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{{ m.excerpt }}</p>
+                        {%- if m.label is defined %}<twig:Badge variant="secondary" class="mt-2">{{ m.label }}</twig:Badge>{% endif %}
+                    </a>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+    <article class="hidden min-h-0 flex-col md:flex">
+        <header class="flex items-start gap-3 border-b p-4">
+            <twig:Avatar><twig:Avatar:Fallback>{{ current.from|split(' ')|map(w => w|first)|join|slice(0, 2)|upper }}</twig:Avatar:Fallback></twig:Avatar>
+            <div class="min-w-0 flex-1">
+                <h2 class="font-semibold">{{ current.subject }}</h2>
+                <p class="text-sm text-muted-foreground">{{ current.from }} · {{ current.time }}</p>
+            </div>
+            <twig:Button variant="ghost" size="icon" aria-label="Archiver"><twig:ux:icon name="lucide:archive" /></twig:Button>
+            <twig:Button variant="ghost" size="icon" aria-label="Supprimer"><twig:ux:icon name="lucide:trash-2" /></twig:Button>
+        </header>
+        <div class="flex-1 overflow-y-auto p-6 text-sm leading-6">
+            {%- block body -%}
+                <p>Bonjour,</p>
+                <p class="mt-3">Merci pour l’envoi de la facture. Le virement part ce soir depuis notre compte professionnel. Pouvez-vous me confirmer l’adresse de facturation pour le prochain devis ?</p>
+                <p class="mt-3">Bonne journée,<br>Atelier Moreau</p>
+            {%- endblock -%}
+        </div>
+        <form class="border-t p-4">
+            <label for="inbox-reply" class="sr-only">Répondre</label>
+            <textarea id="inbox-reply" rows="3" placeholder="Répondre à {{ current.from }}…" class="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"></textarea>
+            <div class="mt-2 flex justify-end"><twig:Button size="sm">Envoyer</twig:Button></div>
+        </form>
+    </article>
+</section>

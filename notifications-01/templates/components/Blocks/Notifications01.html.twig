@@ -1,0 +1,47 @@
+{%- props
+    ## string Form action URL.
+    action = '#',
+    ## array<array{id: string, label: string, description: string, email: bool, app: bool}> Notification settings.
+    settings = [
+        {id: 'payment', label: 'Paiement reçu', description: 'Quand un client règle une facture.', email: true, app: true},
+        {id: 'late', label: 'Facture en retard', description: 'Le lendemain de l’échéance.', email: true, app: true},
+        {id: 'quote', label: 'Devis signé', description: 'Quand un client accepte un devis en ligne.', email: false, app: true},
+        {id: 'digest', label: 'Résumé hebdomadaire', description: 'Chaque lundi, vos encaissements de la semaine.', email: true, app: false},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'p-4 sm:p-6'|tailwind_classes}) }}>
+    <form method="post" action="{{ action }}" class="mx-auto max-w-2xl">
+        <twig:Card>
+            <twig:Card:Header>
+                <twig:Card:Title>Notifications</twig:Card:Title>
+                <twig:Card:Description>Choisissez ce qui vous est signalé, et où.</twig:Card:Description>
+            </twig:Card:Header>
+            <twig:Card:Content class="p-0">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b text-muted-foreground">
+                            <th scope="col" class="px-4 py-2 text-start font-normal">Événement</th>
+                            <th scope="col" class="w-20 px-2 py-2 font-normal">E-mail</th>
+                            <th scope="col" class="w-20 px-4 py-2 font-normal">Application</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%- for s in settings %}
+                            <tr class="border-b last:border-0">
+                                <th scope="row" class="px-4 py-3 text-start font-normal">
+                                    <span class="font-medium">{{ s.label }}</span>
+                                    <span class="block text-muted-foreground">{{ s.description }}</span>
+                                </th>
+                                <td class="px-2 py-3 text-center"><twig:Switch name="notifications[{{ s.id }}][email]" checked="{{ s.email }}" aria-label="{{ s.label }} par e-mail" /></td>
+                                <td class="px-4 py-3 text-center"><twig:Switch name="notifications[{{ s.id }}][app]" checked="{{ s.app }}" aria-label="{{ s.label }} dans l’application" /></td>
+                            </tr>
+                        {%- endfor %}
+                    </tbody>
+                </table>
+            </twig:Card:Content>
+            <twig:Card:Footer class="justify-end border-t py-3">
+                <twig:Button type="submit">Enregistrer</twig:Button>
+            </twig:Card:Footer>
+        </twig:Card>
+    </form>
+</section>

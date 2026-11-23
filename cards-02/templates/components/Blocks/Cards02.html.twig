@@ -1,0 +1,33 @@
+{#- Cartes avec un motif différent en en-tête (grille, losanges, hexagones, points). Nécessite le bloc gratuit Pattern. -#}
+{%- props
+    ## string Heading.
+    title = 'Quatre outils, une seule facture',
+    ## array<array{pattern: 'grid'|'diamond'|'hex'|'dots', icon: string, title: string, text: string, href: string}> Cards.
+    cards = [
+        {pattern: 'grid', icon: 'lucide:file-text', title: 'Devis', text: 'Signés en ligne, transformés en facture en un clic.', href: '#'},
+        {pattern: 'diamond', icon: 'lucide:bell-ring', title: 'Relances', text: 'Trois rappels polis, au bon moment, sans y penser.', href: '#'},
+        {pattern: 'hex', icon: 'lucide:landmark', title: 'Banque', text: 'Chaque virement reçu retrouve sa facture.', href: '#'},
+        {pattern: 'dots', icon: 'lucide:receipt', title: 'TVA', text: 'Montants collectés et déductibles prêts à déclarer.', href: '#'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-6xl">
+        <h2 class="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+        <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {%- for card in cards %}
+                <li class="group relative overflow-hidden rounded-xl border bg-card transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-primary/40 motion-reduce:hover:translate-y-0">
+                    <div class="relative grid h-36 place-items-center overflow-hidden border-b bg-muted/40">
+                        <twig:Blocks:Pattern type="{{ card.pattern }}" size="{{ card.pattern == 'hex' ? 28 : 22 }}" class="text-foreground/15 transition-colors duration-300 group-hover:text-primary/30" />
+                        <span class="relative grid size-12 place-items-center rounded-xl border bg-background shadow-sm transition-transform duration-300 group-hover:scale-110 motion-reduce:group-hover:scale-100">
+                            <twig:ux:icon name="{{ card.icon }}" class="size-5 text-primary" />
+                        </span>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-medium"><a href="{{ card.href }}" class="after:absolute after:inset-0">{{ card.title }}</a></h3>
+                        <p class="mt-1.5 text-sm text-muted-foreground">{{ card.text }}</p>
+                    </div>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

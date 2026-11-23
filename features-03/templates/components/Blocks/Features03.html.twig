@@ -1,0 +1,37 @@
+{#- Carrousel de fonctionnalités : cartes avec capture, défilement au doigt et flèches. Contrôleur : carousel. -#}
+{%- props
+    ## string Heading.
+    title = 'Des fonctions pensées pour les équipes qui facturent',
+    ## array<array{title: string, text: string, image?: string}> Features.
+    features = [
+        {title: 'Tableau de bord', text: 'Solde, encaissements à venir et alertes, sur un seul écran.'},
+        {title: 'Connexion bancaire', text: 'Vos comptes synchronisés en lecture seule, sans ressaisie.'},
+        {title: 'Catégorisation', text: 'Chaque mouvement est classé ; vous ne validez que les cas douteux.'},
+        {title: 'Scénarios', text: 'Une embauche, un gros client perdu : voyez l’effet avant de décider.'},
+    ],
+    ## array<string> Screenshots used, in order, by features without an image.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'overflow-hidden px-4 py-20 sm:px-6'|tailwind_classes}) }} data-controller="carousel">
+    <div class="mx-auto max-w-6xl">
+        <div class="flex items-end justify-between gap-6">
+            <h2 class="max-w-md text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <div class="flex gap-2">
+                <twig:Button variant="outline" size="icon" class="rounded-full" data-carousel-target="prev" data-action="carousel#prev" aria-label="Précédent"><twig:ux:icon name="lucide:chevron-left" /></twig:Button>
+                <twig:Button variant="outline" size="icon" class="rounded-full" data-carousel-target="next" data-action="carousel#next" aria-label="Suivant"><twig:ux:icon name="lucide:chevron-right" /></twig:Button>
+            </div>
+        </div>
+        <ul class="tb-no-scrollbar -mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:px-0" data-carousel-target="track" tabindex="0" aria-label="{{ title }}">
+            {%- for f in features %}
+                {%- set img = f.image ?? images[loop.index0] ?? null %}
+                <li class="w-[85%] shrink-0 snap-start sm:w-[calc(50%-0.5rem)]">
+                    <div class="overflow-hidden rounded-2xl border bg-[linear-gradient(160deg,var(--muted),color-mix(in_oklab,var(--primary)_10%,var(--muted)))] p-6 pb-0">
+                        {%- if img %}<img src="{{ img }}" alt="" loading="lazy" class="aspect-[4/3] w-full rounded-t-xl object-cover object-top shadow-xl">{% else %}<div class="aspect-[4/3] rounded-t-xl bg-background"></div>{% endif %}
+                    </div>
+                    <h3 class="mt-5 font-semibold">{{ f.title }}</h3>
+                    <p class="mt-1 text-sm text-muted-foreground">{{ f.text }}</p>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

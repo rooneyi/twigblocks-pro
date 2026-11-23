@@ -1,0 +1,34 @@
+{#- Cartes à bordure fine avec halo qui suit le pointeur (contrôleur "spotlight") et faisceau animé sur la carte mise en avant. -#}
+{%- props
+    ## string Heading.
+    title = 'Tout ce qui vous fait gagner du temps',
+    ## string Supporting text.
+    description = 'Passez le pointeur sur les cartes.',
+    ## array<array{icon: string, title: string, text: string, metric?: string, featured?: bool}> Cards.
+    cards = [
+        {icon: 'lucide:sparkles', title: 'Relances intelligentes', text: 'Le ton et le moment s’adaptent à l’historique de chaque client.', metric: '−12 jours de délai', featured: true},
+        {icon: 'lucide:link', title: 'Paiement par lien', text: 'Carte ou virement instantané depuis la facture.', metric: '68 % payés sous 48 h'},
+        {icon: 'lucide:landmark', title: 'Rapprochement', text: 'Les virements sont associés sans saisie.', metric: '0 pointage manuel'},
+        {icon: 'lucide:file-spreadsheet', title: 'Export comptable', text: 'FEC et CSV, prêts pour votre cabinet.', metric: '1 clic'},
+        {icon: 'lucide:users', title: 'Équipe', text: 'Rôles, validations et historique des actions.', metric: '5 utilisateurs inclus'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }} data-controller="spotlight reveal">
+    <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl" data-reveal>
+            <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+        </div>
+        <ul class="mt-12 grid gap-4 md:grid-cols-6">
+            {%- for card in cards %}
+                {%- set featured = card.featured ?? false %}
+                <li data-reveal class="tb-spotlight {{ featured ? 'tb-beam' : '' }} flex flex-col rounded-xl border bg-card p-6 {{ loop.index0 < 2 ? 'md:col-span-3' : 'md:col-span-2' }}">
+                    <span class="grid size-10 place-items-center rounded-lg border bg-muted/50"><twig:ux:icon name="{{ card.icon }}" class="size-5 {{ featured ? 'text-primary' : '' }}" /></span>
+                    <h3 class="mt-5 text-lg font-medium">{{ card.title }}</h3>
+                    <p class="mt-1.5 text-sm text-muted-foreground">{{ card.text }}</p>
+                    {%- if card.metric is defined %}<p class="mt-auto pt-6 text-sm font-medium tabular-nums">{{ card.metric }}</p>{% endif %}
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

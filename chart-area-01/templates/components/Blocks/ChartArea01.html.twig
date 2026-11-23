@@ -1,0 +1,55 @@
+{#- Graphique en aire en SVG pur : aucune bibliothèque JavaScript. Les données restent lisibles par les lecteurs d'écran (tableau masqué). -#}
+{%- props
+    ## string Card title.
+    title = 'Encaissements',
+    ## string Card description.
+    description = '12 derniers mois',
+    ## string Headline total.
+    total = '412 300 €',
+    ## string|null Change badge.
+    change = '+18,2 %',
+    ## array<array{label: string, value: float}> Data points, in order.
+    data = [
+        {label: 'Déc', value: 21}, {label: 'Jan', value: 24}, {label: 'Fév', value: 22}, {label: 'Mar', value: 29},
+        {label: 'Avr', value: 31}, {label: 'Mai', value: 28}, {label: 'Juin', value: 35}, {label: 'Juil', value: 33},
+        {label: 'Août', value: 26}, {label: 'Sep', value: 38}, {label: 'Oct', value: 41}, {label: 'Nov', value: 45},
+    ],
+    ## string Unit appended to values in the accessible table.
+    unit = ' k€'
+-%}
+{%- set w = 600 -%}{%- set h = 180 -%}{%- set pad = 8 -%}
+{%- set max = (data|map(d => d.value)|reduce((a, b) => max(a, b), 0)) * 1.1 -%}
+{%- set step = (w - 2 * pad) / max(data|length - 1, 1) -%}
+{%- set points = [] -%}
+{%- for d in data %}{% set points = points|merge([(pad + loop.index0 * step)|round(1) ~ ',' ~ (h - (d.value / max) * (h - pad))|round(1)]) %}{% endfor -%}
+{%- set uid = 'area-' ~ random(100000) -%}
+<twig:Card {{ ...attributes }}>
+    <twig:Card:Header>
+        <twig:Card:Description>{{ title }} · {{ description }}</twig:Card:Description>
+        <twig:Card:Title class="text-2xl font-semibold tabular-nums">{{ total }}</twig:Card:Title>
+        {%- if change %}<twig:Card:Action><twig:Badge variant="outline"><twig:ux:icon name="lucide:trending-up" />{{ change }}</twig:Badge></twig:Card:Action>{% endif %}
+    </twig:Card:Header>
+    <twig:Card:Content>
+        <svg viewBox="0 0 {{ w }} {{ h + 24 }}" class="h-auto w-full overflow-visible text-primary" role="img" aria-labelledby="{{ uid }}-t">
+            <title id="{{ uid }}-t">{{ title }}, {{ description }}</title>
+            <defs>
+                <linearGradient id="{{ uid }}-g" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stop-color="currentColor" stop-opacity="0.28"/>
+                    <stop offset="100%" stop-color="currentColor" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            {%- for i in 0..3 %}
+                <line x1="0" x2="{{ w }}" y1="{{ (pad + i * (h - pad) / 3)|round(1) }}" y2="{{ (pad + i * (h - pad) / 3)|round(1) }}" class="stroke-border" stroke-dasharray="3 4"/>
+            {%- endfor %}
+            <polygon points="{{ pad }},{{ h }} {{ points|join(' ') }} {{ w - pad }},{{ h }}" fill="url(#{{ uid }}-g)"/>
+            <polyline points="{{ points|join(' ') }}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            {%- for d in data %}
+                <text x="{{ (pad + loop.index0 * step)|round(1) }}" y="{{ h + 20 }}" text-anchor="middle" class="fill-muted-foreground text-[11px]">{{ d.label }}</text>
+            {%- endfor %}
+        </svg>
+        <table class="sr-only">
+            <caption>{{ title }}</caption>
+            <tbody>{% for d in data %}<tr><th scope="row">{{ d.label }}</th><td>{{ d.value }}{{ unit }}</td></tr>{% endfor %}</tbody>
+        </table>
+    </twig:Card:Content>
+</twig:Card>

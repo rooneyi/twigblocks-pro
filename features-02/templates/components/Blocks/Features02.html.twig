@@ -1,0 +1,53 @@
+{#- Bento animé : motifs, courbe qui se trace, compteur et intégrations qui défilent. Nécessite le bloc gratuit Pattern. -#}
+{%- props
+    ## string Heading.
+    title = 'Un outil, quatre super-pouvoirs',
+    ## string Supporting text.
+    description = 'Chaque case montre une partie du produit en mouvement.'
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }} data-controller="reveal">
+    <div class="mx-auto max-w-6xl">
+        <div class="max-w-2xl" data-reveal>
+            <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+        </div>
+        <div class="mt-12 grid gap-4 md:grid-cols-6 md:grid-rows-[16rem_16rem]">
+            <div data-reveal class="relative overflow-hidden rounded-2xl border bg-card p-6 md:col-span-4">
+                <h3 class="font-medium">Trésorerie prévue</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Mise à jour chaque nuit à partir de vos comptes.</p>
+                <svg viewBox="0 0 600 140" class="absolute inset-x-0 bottom-0 h-36 w-full text-primary" aria-hidden="true" preserveAspectRatio="none">
+                    <path d="M0 120 C80 110 120 80 200 86 S320 44 400 56 S520 18 600 20" fill="none" stroke="currentColor" stroke-width="2.5" pathLength="1" class="[stroke-dasharray:1] [stroke-dashoffset:1] motion-safe:animate-[tb-draw_2.6s_ease-out_0.3s_forwards] motion-reduce:[stroke-dashoffset:0]"/>
+                    <path d="M0 120 C80 110 120 80 200 86 S320 44 400 56 S520 18 600 20 V140 H0Z" fill="currentColor" fill-opacity="0.08"/>
+                </svg>
+            </div>
+            <div data-reveal class="relative overflow-hidden rounded-2xl border bg-primary p-6 text-primary-foreground md:col-span-2">
+                <twig:Blocks:Pattern type="hex" size="24" fade="bottom" class="text-primary-foreground/15" />
+                <p class="relative text-sm text-primary-foreground/80">Payées sous 48 h</p>
+                <p class="relative mt-2 text-6xl font-semibold tracking-tight tabular-nums" data-controller="counter" data-counter-to-value="68" data-counter-suffix-value=" %">68 %</p>
+                <p class="relative mt-auto pt-8 text-sm text-primary-foreground/80">des factures envoyées avec un lien de paiement.</p>
+            </div>
+            <div data-reveal class="relative overflow-hidden rounded-2xl border bg-card p-6 md:col-span-2">
+                <twig:Blocks:Pattern type="diamond" size="26" fade="radial" class="text-foreground/10" />
+                <h3 class="relative font-medium">Relances sur mesure</h3>
+                <ol class="relative mt-5 space-y-2 text-sm">
+                    {%- for r in [['J+1', 'Rappel courtois'], ['J+7', 'Lien de paiement'], ['J+15', 'Dernier rappel']] %}
+                        <li class="flex items-center gap-3 rounded-lg border bg-background/90 px-3 py-2"><span class="w-10 font-medium text-primary tabular-nums">{{ r[0] }}</span>{{ r[1] }}</li>
+                    {%- endfor %}
+                </ol>
+            </div>
+            <div data-reveal class="relative flex flex-col overflow-hidden rounded-2xl border bg-card p-6 md:col-span-4">
+                <h3 class="font-medium">Se branche sur vos outils</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Banques, comptabilité, agenda, messagerie.</p>
+                <div class="tb-marquee-host tb-fade-x mt-auto overflow-hidden">
+                    <ul class="tb-marquee py-2" style="--tb-duration: 28s; --tb-gap: 0.75rem">
+                        {%- for copy in [false, true] %}
+                            {%- for i in [['lucide:landmark', 'Banque'], ['lucide:calculator', 'Comptabilité'], ['lucide:calendar', 'Agenda'], ['lucide:mail', 'Messagerie'], ['lucide:file-spreadsheet', 'Tableur'], ['lucide:webhook', 'Webhooks']] %}
+                                <li class="flex shrink-0 items-center gap-2 rounded-lg border bg-background px-3 py-2 text-sm" {% if copy %}aria-hidden="true"{% endif %}><twig:ux:icon name="{{ i[0] }}" class="size-4 text-primary" />{{ i[1] }}</li>
+                            {%- endfor %}
+                        {%- endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

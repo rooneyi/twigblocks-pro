@@ -1,0 +1,87 @@
+/*
+ * Effets TwigBlocks : défilement continu, bordure animée, halo qui suit le pointeur, apparition au défilement.
+ * À importer après le CSS du kit Shadcn. Tous les mouvements s'arrêtent si l'utilisateur a demandé
+ * moins d'animations dans son système (prefers-reduced-motion).
+ */
+
+/* Défilement continu (logos, témoignages). Le contenu doit être dupliqué une fois dans .tb-marquee. */
+@keyframes tb-marquee { to { transform: translateX(calc(-50% - var(--tb-gap, 1.5rem) / 2)); } }
+.tb-marquee { display: flex; width: max-content; gap: var(--tb-gap, 1.5rem); animation: tb-marquee var(--tb-duration, 45s) linear infinite; }
+.tb-marquee-reverse { animation-direction: reverse; }
+.tb-marquee-host:hover .tb-marquee, .tb-marquee-host:focus-within .tb-marquee { animation-play-state: paused; }
+.tb-fade-x { mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+[dir='rtl'] .tb-marquee { animation-direction: reverse; }
+
+/* Bordure animée : un faisceau de lumière fait le tour de l'élément. */
+@property --tb-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes tb-spin { to { --tb-angle: 360deg; } }
+.tb-beam { position: relative; }
+.tb-beam::after {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none;
+    background: conic-gradient(from var(--tb-angle), transparent 0 65%, var(--primary) 82%, transparent 92%);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: tb-spin var(--tb-beam-duration, 5s) linear infinite;
+}
+
+/* Halo qui suit le pointeur (contrôleur Stimulus "spotlight"). */
+.tb-spotlight { position: relative; }
+.tb-spotlight::before {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+    background: radial-gradient(420px circle at var(--tb-x, 50%) var(--tb-y, 50%), color-mix(in oklch, var(--primary) 14%, transparent), transparent 65%);
+}
+.tb-spotlight:hover::before { opacity: 1; }
+
+/* Motif qui glisse lentement (fonds de hero). */
+@keyframes tb-pan { to { transform: translate(var(--tb-pan-x, 40px), var(--tb-pan-y, 40px)); } }
+.tb-pan { animation: tb-pan var(--tb-pan-duration, 12s) linear infinite; }
+
+/* Léger flottement (cartes d'illustration). */
+@keyframes tb-float { 50% { transform: translateY(-8px); } }
+.tb-float { animation: tb-float 6s ease-in-out infinite; }
+
+/* Apparition au défilement (contrôleur Stimulus "reveal"). Sans JavaScript, tout reste visible. */
+.tb-reveal-ready [data-reveal] { opacity: 0; transform: translateY(14px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); transition-delay: calc(var(--tb-i, 0) * 90ms); }
+.tb-reveal-ready [data-reveal].is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+    .tb-marquee, .tb-beam::after, .tb-pan, .tb-float { animation: none; }
+    .tb-reveal-ready [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
+/* Tracé progressif d'une courbe SVG (pathLength="1"). */
+@keyframes tb-draw { to { stroke-dashoffset: 0; } }
+
+/* --- Coloration du code (contrôleur highlight) ------------------------------------------------- */
+.tb-tok-comment { color: color-mix(in oklab, var(--muted-foreground) 80%, transparent); font-style: italic; }
+.tb-tok-string { color: oklch(0.55 0.15 150); }
+.tb-tok-keyword { color: oklch(0.55 0.2 300); }
+.tb-tok-delim { color: oklch(0.6 0.17 35); }
+.tb-tok-var { color: oklch(0.55 0.16 250); }
+.tb-tok-number { color: oklch(0.6 0.16 60); }
+.tb-tok-func { color: oklch(0.52 0.14 200); }
+.tb-tok-prompt { color: var(--muted-foreground); user-select: none; }
+.dark .tb-tok-string { color: oklch(0.8 0.14 150); }
+.dark .tb-tok-keyword { color: oklch(0.78 0.15 300); }
+.dark .tb-tok-delim { color: oklch(0.78 0.14 45); }
+.dark .tb-tok-var { color: oklch(0.78 0.12 250); }
+.dark .tb-tok-func { color: oklch(0.8 0.1 200); }
+
+/* --- Pile de cartes (contrôleur stack) ----------------------------------------------------------- */
+.tb-stack > [data-depth] { transition: transform .5s cubic-bezier(.2,.7,.2,1), opacity .4s ease; transform-origin: 50% 100%; }
+.tb-stack > [data-depth="0"] { z-index: 3; }
+.tb-stack > [data-depth="1"] { z-index: 2; transform: translateY(14px) scale(.96); opacity: .75; }
+.tb-stack > [data-depth="2"] { z-index: 1; transform: translateY(28px) scale(.92); opacity: .45; }
+.tb-stack > [data-depth="3"] { z-index: 0; transform: translateY(28px) scale(.92); opacity: 0; }
+
+/* --- Visuels liés à un accordéon (contrôleur switcher) ------------------------------------------- */
+.tb-switch-panel { opacity: 0; transform: scale(.98); transition: opacity .4s ease, transform .4s ease; }
+.tb-switch-panel.is-active { opacity: 1; transform: none; }
+
+/* --- Défilement horizontal sans barre -------------------------------------------------------------- */
+.tb-no-scrollbar { scrollbar-width: none; }
+.tb-no-scrollbar::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+    .tb-stack > [data-depth], .tb-switch-panel { transition: none; }
+}

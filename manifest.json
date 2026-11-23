@@ -1,0 +1,18 @@
+{
+    "$schema": "https://raw.githubusercontent.com/symfony/ux/3.x/src/Toolkit/schema-kit-v1.json",
+    "name": "TwigBlocks Obsidienne",
+    "description": "Blocs premium construits sur le kit Shadcn du Symfony UX Toolkit.",
+    "license": "proprietary",
+    "homepage": "https://twigblocks.example",
+    "color": "hsl(231,100%,59%)",
+    "dependencies": {
+        "npm": [
+            "shadcn",
+            "tw-animate-css"
+        ],
+        "importmap": [
+            "tw-animate-css/dist/tw-animate.css",
+            "shadcn/dist/tailwind.css"
+        ]
+    }
+}

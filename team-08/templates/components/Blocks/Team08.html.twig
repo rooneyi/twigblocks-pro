@@ -1,0 +1,33 @@
+{#- Grille compacte de petits portraits carrés, pour une équipe plus large. -#}
+{%- props
+    ## string Heading.
+    title = 'Les personnes derrière le produit',
+    ## array<array{name: string, role: string, photo?: string}> Members.
+    members = [
+        {name: 'Aïcha Mbaye', role: 'Cofondatrice, présidente'},
+        {name: 'Kevin Mulamba', role: 'Cofondateur, directeur technique'},
+        {name: 'Clara Fontaine', role: 'Responsable produit'},
+        {name: 'Thomas Girard', role: 'Responsable ingénierie'},
+        {name: 'Grace Ilunga', role: 'Responsable design'},
+        {name: 'Hugo Lambert', role: 'Responsable commercial'},
+        {name: 'Nadège Kabeya', role: 'Directrice financière'},
+        {name: 'Samuel Okito', role: 'Responsable des opérations'}
+    ],
+    ## array<string> Photos used, in order, by members without a photo.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-5xl">
+        <h2 class="max-w-sm text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+        <ul class="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+            {%- for m in members %}
+                {%- set photo = m.photo ?? images[loop.index0] ?? null %}
+                <li>
+                    {%- if photo %}<img src="{{ photo }}" alt="" loading="lazy" class="size-24 rounded-xl object-cover grayscale ring-1 ring-border">{% else %}<span class="grid size-24 place-items-center rounded-xl bg-muted text-lg font-semibold">{{ m.name|split(' ')|map(w => w|first)|join|slice(0, 2) }}</span>{% endif %}
+                    <h3 class="mt-4 font-medium">{{ m.name }}</h3>
+                    <p class="text-sm text-muted-foreground">{{ m.role }}</p>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

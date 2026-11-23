@@ -1,0 +1,40 @@
+{#- Portraits verticaux avec nom et rôle en surimpression sur un dégradé. -#}
+{%- props
+    ## string Heading.
+    title = 'Notre équipe',
+    ## string Supporting text.
+    description = 'Des profils variés, réunis par la même envie : rendre la gestion d’une petite entreprise moins pénible.',
+    ## array<array{name: string, role: string, photo?: string}> Members.
+    members = [
+        {name: 'Aïcha Mbaye', role: 'Cofondatrice, présidente'},
+        {name: 'Kevin Mulamba', role: 'Cofondateur, directeur technique'},
+        {name: 'Clara Fontaine', role: 'Responsable produit'},
+        {name: 'Thomas Girard', role: 'Responsable ingénierie'},
+        {name: 'Grace Ilunga', role: 'Responsable design'},
+        {name: 'Hugo Lambert', role: 'Responsable commercial'},
+        {name: 'Nadège Kabeya', role: 'Directrice financière'},
+        {name: 'Samuel Okito', role: 'Responsable des opérations'}
+    ],
+    ## array<string> Photos used, in order, by members without a photo.
+    images = []
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }} data-controller="reveal">
+    <div class="mx-auto max-w-6xl">
+        <div class="max-w-xl">
+            <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+        </div>
+        <ul class="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4">
+            {%- for m in members %}
+                {%- set photo = m.photo ?? images[loop.index0] ?? null %}
+                <li class="group relative overflow-hidden rounded-xl bg-muted" data-reveal style="transition-delay: {{ (loop.index0 % 4) * 80 }}ms">
+                    {%- if photo %}<img src="{{ photo }}" alt="" loading="lazy" class="aspect-[4/5] w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0 motion-reduce:group-hover:scale-100">{% else %}<div class="aspect-[4/5]"></div>{% endif %}
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent p-4 pt-16 text-white">
+                        <h3 class="font-medium">{{ m.name }}</h3>
+                        <p class="text-sm text-white/75">{{ m.role }}</p>
+                    </div>
+                </li>
+            {%- endfor %}
+        </ul>
+    </div>
+</section>

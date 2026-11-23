@@ -1,0 +1,56 @@
+{%- props
+    ## string Form action URL.
+    action = '#',
+    ## array{name: string, email: string, company: string} Current values.
+    values = {name: 'Camille Durand', email: 'camille@exemple.fr', company: 'Studio Durand'}
+-%}
+<section {{ attributes.defaults({class: 'mx-auto max-w-3xl space-y-6 p-4 sm:p-6'|tailwind_classes}) }}>
+    <div>
+        <h1 class="text-2xl font-semibold tracking-tight">Paramètres du compte</h1>
+        <p class="mt-1 text-sm text-muted-foreground">Ces informations apparaissent sur vos factures.</p>
+    </div>
+    <form method="post" action="{{ action }}">
+        <twig:Card>
+            <twig:Card:Header>
+                <twig:Card:Title>Profil</twig:Card:Title>
+                <twig:Card:Description>Votre identité et celle de votre entreprise.</twig:Card:Description>
+            </twig:Card:Header>
+            <twig:Card:Content>
+                <twig:Field:Group>
+                    <twig:Field orientation="responsive">
+                        <twig:Field:Content>
+                            <twig:Field:Label for="settings-name">Nom complet</twig:Field:Label>
+                        </twig:Field:Content>
+                        <twig:Input id="settings-name" name="name" value="{{ values.name }}" class="sm:max-w-xs" />
+                    </twig:Field>
+                    <twig:Field:Separator />
+                    <twig:Field orientation="responsive">
+                        <twig:Field:Content>
+                            <twig:Field:Label for="settings-email">E-mail</twig:Field:Label>
+                            <twig:Field:Description>Utilisé pour la connexion.</twig:Field:Description>
+                        </twig:Field:Content>
+                        <twig:Input id="settings-email" name="email" type="email" value="{{ values.email }}" class="sm:max-w-xs" />
+                    </twig:Field>
+                    <twig:Field:Separator />
+                    <twig:Field orientation="responsive">
+                        <twig:Field:Content>
+                            <twig:Field:Label for="settings-company">Raison sociale</twig:Field:Label>
+                        </twig:Field:Content>
+                        <twig:Input id="settings-company" name="company" value="{{ values.company }}" class="sm:max-w-xs" />
+                    </twig:Field>
+                </twig:Field:Group>
+            </twig:Card:Content>
+            <twig:Card:Footer class="justify-end gap-2 border-t py-3">
+                <twig:Button variant="ghost" type="reset">Annuler</twig:Button>
+                <twig:Button type="submit">Enregistrer</twig:Button>
+            </twig:Card:Footer>
+        </twig:Card>
+    </form>
+    <twig:Card class="ring-destructive/30">
+        <twig:Card:Header>
+            <twig:Card:Title>Supprimer le compte</twig:Card:Title>
+            <twig:Card:Description>Vos factures sont exportées puis effacées sous 30 jours. Cette action est définitive.</twig:Card:Description>
+            <twig:Card:Action><twig:Button variant="destructive">Supprimer le compte</twig:Button></twig:Card:Action>
+        </twig:Card:Header>
+    </twig:Card>
+</section>

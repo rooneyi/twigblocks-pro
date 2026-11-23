@@ -1,0 +1,46 @@
+{#- Hero en deux colonnes sur motif hexagonal, avec des notifications qui flottent. Nécessite le bloc gratuit Pattern. -#}
+{%- props
+    ## string Main heading.
+    title = 'Chaque paiement, au moment où il arrive',
+    ## string Supporting paragraph.
+    description = 'Lumen vous prévient quand une facture est vue, payée ou en retard. Vous savez toujours où en est votre trésorerie.',
+    ## string Primary button label.
+    primaryLabel = 'Essayer 14 jours',
+    ## string Primary button target.
+    primaryHref = '#',
+    ## array<array{icon: string, title: string, text: string, tone: 'primary'|'success'|'warning'}> Floating notifications.
+    notifications = [
+        {icon: 'lucide:circle-check', title: 'Paiement reçu', text: 'Studio Lune · 1 200,00 €', tone: 'success'},
+        {icon: 'lucide:eye', title: 'Facture consultée', text: 'Atelier Moreau · il y a 2 min', tone: 'primary'},
+        {icon: 'lucide:clock', title: 'Relance programmée', text: 'Cabinet Roux · demain 9 h', tone: 'warning'},
+    ]
+-%}
+{%- set tones = {primary: 'bg-primary/10 text-primary', success: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400', warning: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'} -%}
+<section {{ attributes.defaults({class: 'relative isolate overflow-hidden px-4 py-20 sm:px-6 sm:py-28'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
+        <div>
+            <h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{{ title }}</h1>
+            <p class="mt-6 max-w-lg text-lg text-pretty text-muted-foreground">{{ description }}</p>
+            <div class="mt-9 flex flex-wrap items-center gap-4">
+                <twig:Button as="a" size="lg" href="{{ primaryHref }}" class="h-10 px-5">{{ primaryLabel }}</twig:Button>
+                <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div class="flex -space-x-2">
+                        {%- for n in ['LN', 'AP', 'JB', 'SB'] %}<twig:Avatar class="size-8 ring-2 ring-background"><twig:Avatar:Fallback class="text-[11px] font-medium">{{ n }}</twig:Avatar:Fallback></twig:Avatar>{% endfor %}
+                    </div>
+                    Déjà adopté par 4 000 indépendants
+                </div>
+            </div>
+        </div>
+        <div class="relative h-[26rem] overflow-hidden rounded-3xl border bg-muted/30">
+            <twig:Blocks:Pattern type="hex" size="34" fade="radial" class="text-primary/25" />
+            <ul class="absolute inset-0 flex flex-col justify-center gap-4 p-8" aria-label="Exemples de notifications">
+                {%- for n in notifications %}
+                    <li class="tb-float flex w-72 items-center gap-3 rounded-xl border bg-background/95 p-3.5 shadow-lg backdrop-blur {{ loop.index == 2 ? 'self-end' : (loop.index == 3 ? 'self-center' : '') }}" style="animation-delay: -{{ loop.index0 * 2 }}s">
+                        <span class="grid size-9 shrink-0 place-items-center rounded-lg {{ tones[n.tone] }}"><twig:ux:icon name="{{ n.icon }}" class="size-4" /></span>
+                        <span class="text-sm"><span class="block font-medium">{{ n.title }}</span><span class="text-muted-foreground">{{ n.text }}</span></span>
+                    </li>
+                {%- endfor %}
+            </ul>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,44 @@
+{%- props
+    ## string Heading.
+    title = 'Un prix simple, sans engagement',
+    ## string Supporting text.
+    description = 'Changez de formule ou arrêtez quand vous voulez.',
+    ## array<array{name: string, price: string, period: string, description: string, features: array<string>, cta: string, href: string, featured?: bool}> Plans.
+    plans = [
+        {name: 'Solo', price: '0 €', period: '/mois', description: 'Pour démarrer votre activité.', features: ['5 factures par mois', 'Devis illimités', 'Paiement par lien'], cta: 'Commencer', href: '#'},
+        {name: 'Pro', price: '19 €', period: '/mois', description: 'Pour les indépendants installés.', features: ['Factures illimitées', 'Relances automatiques', 'Rapprochement bancaire', 'Export comptable'], cta: 'Essayer 14 jours', href: '#', featured: true},
+        {name: 'Équipe', price: '49 €', period: '/mois', description: 'Pour les agences et cabinets.', features: ['Tout le plan Pro', '5 utilisateurs inclus', 'Rôles et validations', 'Support prioritaire'], cta: 'Nous contacter', href: '#'},
+    ],
+    ## string Label shown on the featured plan.
+    featuredLabel = 'Le plus choisi'
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-6xl">
+        <div class="mx-auto max-w-2xl text-center">
+            <h2 class="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+        </div>
+        <div class="mt-12 grid gap-6 lg:grid-cols-{{ plans|length }} lg:items-start">
+            {%- for plan in plans %}
+                {%- set featured = plan.featured ?? false %}
+                <twig:Card class="{{ featured ? 'ring-2 ring-primary lg:-mt-4 lg:pb-8' : '' }}">
+                    <twig:Card:Header>
+                        <twig:Card:Title class="text-base">{{ plan.name }}</twig:Card:Title>
+                        <twig:Card:Description>{{ plan.description }}</twig:Card:Description>
+                        {%- if featured %}<twig:Card:Action><twig:Badge>{{ featuredLabel }}</twig:Badge></twig:Card:Action>{% endif %}
+                    </twig:Card:Header>
+                    <twig:Card:Content class="space-y-6">
+                        <p><span class="text-4xl font-semibold tracking-tight tabular-nums">{{ plan.price }}</span><span class="text-muted-foreground">{{ plan.period }}</span></p>
+                        <twig:Button as="a" href="{{ plan.href }}" variant="{{ featured ? 'default' : 'outline' }}" size="lg" class="w-full">{{ plan.cta }}</twig:Button>
+                        <ul class="space-y-2.5 text-sm">
+                            {%- for feature in plan.features %}
+                                <li class="flex gap-2"><twig:ux:icon name="lucide:check" class="mt-0.5 size-4 shrink-0 text-primary" />{{ feature }}</li>
+                            {%- endfor %}
+                        </ul>
+                    </twig:Card:Content>
+                </twig:Card>
+            {%- endfor %}
+        </div>
+        {%- block footer %}{% endblock -%}
+    </div>
+</section>

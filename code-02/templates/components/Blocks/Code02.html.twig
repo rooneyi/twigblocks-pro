@@ -1,0 +1,55 @@
+{#- Texte et étapes à gauche, terminal à droite dont les lignes apparaissent au défilement. Contrôleurs : reveal, highlight. -#}
+{%- props
+    ## string Small label above the heading.
+    eyebrow = 'Pour les développeurs',
+    ## string Heading.
+    title = 'Installé en trois commandes',
+    ## string Supporting text.
+    description = 'Pas de paquet à maintenir : les blocs sont copiés dans votre projet et vous appartiennent.',
+    ## array<array{title: string, text: string}> Steps shown next to the terminal.
+    steps = [
+        {title: 'Installez les composants', text: 'Le kit Shadcn du Symfony UX Toolkit fournit boutons, cartes et champs.'},
+        {title: 'Copiez les blocs', text: 'Chaque bloc est un fichier Twig dans templates/components/Blocks.'},
+        {title: 'Utilisez-les', text: 'Une balise <twig:Blocks:…> par section, avec vos textes en props.'},
+    ],
+    ## array<array{kind: string, text: string}> Terminal lines. kind: cmd (command), out (output) or ok (success).
+    lines = [
+        {kind: 'cmd', text: 'composer require symfony/ux-toolkit symfony/ux-icons'},
+        {kind: 'out', text: 'Using version ^3.7 for symfony/ux-toolkit'},
+        {kind: 'cmd', text: 'php bin/console ux:install button card badge --kit=shadcn'},
+        {kind: 'ok', text: '3 composants installés dans templates/components'},
+        {kind: 'cmd', text: 'cp -r twigblocks-pro/*/templates templates/'},
+        {kind: 'ok', text: '75 blocs prêts : <twig:Blocks:Hero03 />'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }} data-controller="reveal">
+    <div class="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.2fr]">
+        <div>
+            <p class="text-sm font-medium text-primary">{{ eyebrow }}</p>
+            <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-lg text-muted-foreground">{{ description }}</p>
+            <ol class="mt-10 space-y-6">
+                {%- for s in steps %}
+                    <li class="grid grid-cols-[2rem_1fr] gap-3" data-reveal>
+                        <span class="grid size-7 place-items-center rounded-full border bg-background font-mono text-xs tabular-nums">{{ loop.index }}</span>
+                        <span><span class="block font-medium">{{ s.title }}</span><span class="text-sm text-muted-foreground">{{ s.text }}</span></span>
+                    </li>
+                {%- endfor %}
+            </ol>
+        </div>
+        <div class="overflow-hidden rounded-xl border bg-zinc-950 text-zinc-100 shadow-2xl shadow-black/20 dark:bg-zinc-900">
+            <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+                <span class="flex gap-1.5" aria-hidden="true"><span class="size-2.5 rounded-full bg-[#ff5f57]"></span><span class="size-2.5 rounded-full bg-[#febc2e]"></span><span class="size-2.5 rounded-full bg-[#28c840]"></span></span>
+                <span class="mx-auto flex items-center gap-2 font-mono text-xs text-zinc-400"><twig:ux:icon name="lucide:terminal" class="size-3.5" />~/mon-projet</span>
+            </div>
+            <ol class="space-y-2 p-5 font-mono text-[13px] leading-6">
+                {%- for l in lines %}
+                    <li data-reveal class="{{ l.kind == 'cmd' ? 'text-zinc-100' : (l.kind == 'ok' ? 'text-emerald-400' : 'text-zinc-400') }}" style="transition-delay: {{ loop.index0 * 120 }}ms">
+                        {%- if l.kind == 'cmd' %}<span class="text-zinc-500 select-none">$ </span>{% elseif l.kind == 'ok' %}<span class="select-none">✓ </span>{% endif %}{{ l.text }}
+                    </li>
+                {%- endfor %}
+                <li class="flex items-center"><span class="text-zinc-500 select-none">$ </span><span class="inline-block h-4 w-2 animate-pulse bg-zinc-300 motion-reduce:animate-none"></span></li>
+            </ol>
+        </div>
+    </div>
+</section>

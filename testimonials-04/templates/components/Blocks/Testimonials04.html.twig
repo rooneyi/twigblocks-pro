@@ -1,0 +1,43 @@
+{#- Témoignage principal et grille à bordures fines. Contenu de démonstration : remplacez les citations. -#}
+{%- props
+    ## string Heading.
+    title = 'Ce qu’en disent ceux qui l’utilisent',
+    ## array{quote: string, name: string, role: string, metric: string, metricLabel: string} Featured testimonial.
+    featured = {quote: 'En trois mois, notre délai moyen de paiement est passé de 41 à 19 jours. On n’a rien changé d’autre que l’outil.', name: 'Lucien Ntwali', role: 'Fondateur', metric: '−22 j', metricLabel: 'de délai de paiement'},
+    ## array<array{quote: string, name: string, role: string}> Other testimonials.
+    items = [
+        {quote: 'Les relances automatiques ont un ton juste, nos clients ne se sentent pas harcelés.', name: 'Augustin Paisible', role: 'Directeur technique'},
+        {quote: 'L’interface est claire : toute l’équipe s’en sert sans formation.', name: 'Jonathan Bolibenga', role: 'Designer produit'},
+        {quote: 'L’API et les webhooks se branchent en une après-midi sur notre application Symfony.', name: 'Simplice Bondo', role: 'Développeur Symfony'},
+        {quote: 'Je suis mes encaissements depuis mon téléphone entre deux rendez-vous.', name: 'Philemon Kambale', role: 'Responsable commercial'},
+    ]
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto max-w-6xl">
+        <h2 class="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{{ title }}</h2>
+        <div class="mt-12 grid border-s border-t lg:grid-cols-[1.2fr_1fr]">
+            <figure class="relative flex flex-col justify-between overflow-hidden border-e border-b p-8 sm:p-10">
+                <twig:Blocks:Pattern type="diamond" size="28" fade="bottom" class="text-foreground/[0.07]" />
+                <blockquote class="relative text-2xl font-medium tracking-tight text-balance">« {{ featured.quote }} »</blockquote>
+                <div class="relative mt-10 flex flex-wrap items-end justify-between gap-6">
+                    <figcaption class="flex items-center gap-3">
+                        <twig:Avatar class="size-11"><twig:Avatar:Fallback>{{ featured.name|split(' ')|map(w => w|first)|join|slice(0, 2)|upper }}</twig:Avatar:Fallback></twig:Avatar>
+                        <div class="text-sm"><p class="font-medium">{{ featured.name }}</p><p class="text-muted-foreground">{{ featured.role }}</p></div>
+                    </figcaption>
+                    <p class="text-end"><span class="block text-4xl font-semibold tracking-tight text-primary tabular-nums">{{ featured.metric }}</span><span class="text-sm text-muted-foreground">{{ featured.metricLabel }}</span></p>
+                </div>
+            </figure>
+            <div class="grid sm:grid-cols-2">
+                {%- for t in items %}
+                    <figure class="flex flex-col justify-between border-e border-b p-6">
+                        <blockquote class="text-sm leading-6">« {{ t.quote }} »</blockquote>
+                        <figcaption class="mt-5 flex items-center gap-2.5 text-sm">
+                            <twig:Avatar class="size-7"><twig:Avatar:Fallback class="text-[10px]">{{ t.name|split(' ')|map(w => w|first)|join|slice(0, 2)|upper }}</twig:Avatar:Fallback></twig:Avatar>
+                            <span><span class="font-medium">{{ t.name }}</span> <span class="text-muted-foreground">· {{ t.role }}</span></span>
+                        </figcaption>
+                    </figure>
+                {%- endfor %}
+            </div>
+        </div>
+    </div>
+</section>

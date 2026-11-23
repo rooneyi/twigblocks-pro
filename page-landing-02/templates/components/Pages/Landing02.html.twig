@@ -1,0 +1,29 @@
+{#- Landing page complète en thème sombre (variante `dark` du kit Shadcn), plus éditoriale. -#}
+{%- props
+    ## string Brand name passed to the navigation and footer.
+    brand = 'Lumen'
+-%}
+<div {{ attributes.defaults({class: 'dark bg-background text-foreground'|tailwind_classes}) }}>
+    <twig:Blocks:Navbar01 brand="{{ brand }}" class="sticky top-0 z-40" />
+    <main>
+        {%- block hero -%}
+            <twig:Blocks:Hero01
+                announcement="Lumen 3 est disponible"
+                title="Votre trésorerie, enfin lisible"
+                description="Factures, relances, encaissements et prévisions sur un seul écran. Pensé pour les agences et les cabinets."
+                primaryLabel="Demander une démo"
+                secondaryLabel="Voir la visite guidée"
+            />
+            <twig:Blocks:Stats01 class="mx-auto -mt-6 max-w-6xl pb-12" />
+        {%- endblock -%}
+        {%- block sections -%}
+            <twig:Blocks:LogoCloud01 title="Ils pilotent leur trésorerie avec Lumen" />
+            <twig:Blocks:Features01 />
+            <twig:Blocks:Content01 />
+            <twig:Blocks:Team01 />
+            <twig:Blocks:Newsletter01 />
+        {%- endblock -%}
+        <twig:Blocks:Cta01 title="Parlons de vos encaissements" description="30 minutes, en visio, avec quelqu’un qui connaît la facturation." buttonLabel="Réserver un créneau" />
+    </main>
+    <twig:Blocks:Footer01 brand="{{ brand }}" />
+</div>

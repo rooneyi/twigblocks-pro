@@ -1,0 +1,50 @@
+{%- props
+    ## string Heading.
+    title = 'Parlons de votre projet',
+    ## string Supporting text.
+    description = 'Remplissez le formulaire, un membre de l’équipe vous répond sous 24 h ouvrées.',
+    ## string Form action URL.
+    action = '#',
+    ## string Contact e-mail displayed on the side.
+    email = 'contact@exemple.fr',
+    ## string|null Phone number displayed on the side.
+    phone = '01 23 45 67 89'
+-%}
+<section {{ attributes.defaults({class: 'px-4 py-20 sm:px-6'|tailwind_classes}) }}>
+    <div class="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[1fr_1.4fr]">
+        <div>
+            <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h2>
+            <p class="mt-4 text-muted-foreground">{{ description }}</p>
+            <ul class="mt-8 space-y-3 text-sm">
+                <li class="flex items-center gap-3"><twig:ux:icon name="lucide:mail" class="size-4 text-muted-foreground" /><a href="mailto:{{ email }}" class="hover:underline">{{ email }}</a></li>
+                {%- if phone %}<li class="flex items-center gap-3"><twig:ux:icon name="lucide:phone" class="size-4 text-muted-foreground" />{{ phone }}</li>{% endif %}
+            </ul>
+        </div>
+        <form method="post" action="{{ action }}">
+            {%- block fields -%}
+            <twig:Field:Group>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <twig:Field>
+                        <twig:Field:Label for="contact-name">Nom</twig:Field:Label>
+                        <twig:Input id="contact-name" name="name" autocomplete="name" required />
+                    </twig:Field>
+                    <twig:Field>
+                        <twig:Field:Label for="contact-email">E-mail</twig:Field:Label>
+                        <twig:Input id="contact-email" name="email" type="email" autocomplete="email" required />
+                    </twig:Field>
+                </div>
+                <twig:Field>
+                    <twig:Field:Label for="contact-company">Entreprise</twig:Field:Label>
+                    <twig:Input id="contact-company" name="company" autocomplete="organization" />
+                    <twig:Field:Description>Facultatif</twig:Field:Description>
+                </twig:Field>
+                <twig:Field>
+                    <twig:Field:Label for="contact-message">Message</twig:Field:Label>
+                    <textarea id="contact-message" name="message" rows="5" required class="w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-2 text-base outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"></textarea>
+                </twig:Field>
+                <twig:Button type="submit" size="lg" class="w-fit">Envoyer le message</twig:Button>
+            </twig:Field:Group>
+            {%- endblock -%}
+        </form>
+    </div>
+</section>
